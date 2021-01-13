@@ -39,7 +39,7 @@ import FunctionsTF as F
 
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 
-homeDirectory = f's3://{bucket_name}/'
+homeDirectory = f'~/EBSPlungerFiles/'
 
 model_name = r'20201216_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
 model_save_location = homeDirectory + r'Models/' + model_name
