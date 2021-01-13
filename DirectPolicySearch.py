@@ -4,12 +4,11 @@
 # In[1]:
 
 
-import tensorflow as tf
-#tf.config.experimental.list_physical_devices('GPU')
+#import tensorflow as tf
+
 
 
 # In[4]:
-
 
 #from IPython.core.display import display, HTML 
 #display(HTML("<style>.container { width:100% !important; }</style>")) #Make full screen width
@@ -67,13 +66,15 @@ from tensorflow.keras import backend as K
 
 import tqdm
 
-#pd.set_option("display.precision", 1)
+pd.set_option("display.precision", 1)
 
 
 # In[8]:
 
 
-#tf.__version__
+print(f'TF version: {tf.__version__}')
+lGpus = tf.config.experimental.list_physical_devices('GPU')
+print(f'GPUs: {lGpus}')
 
 
 # In[9]:
@@ -87,17 +88,17 @@ import FunctionsTF as F
 
 # In[10]:
 
+bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 
-homeDirectory = '/home/ec2-user/SageMaker/'
+homeDirectory = f's3://{bucket_name}/'
 
 model_name = r'20201216_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
 model_save_location = homeDirectory + r'Models/' + model_name
 
-bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 
 # outputPath = homeDirectory + r'RecommendedSettings/' + datetime.today().strftime('%Y-%m-%d') + '-RecommendedSettings.csv'
-outputPath = 's3://hilcorp-l48operations-plunger-lift-main/RecommendedSettings/' + datetime.today().strftime('%Y-%m-%d') + '-RecommendedSettings.csv'
-print(outputPath)
+outputPath = f's3://{bucket_name}/RecommendedSettings/{datetime.today().strftime('%Y-%m-%d')}-RecommendedSettings.csv'
+print(f'Output Settings Path: {outputPath}')
 
 
 # In[19]:
@@ -105,13 +106,13 @@ print(outputPath)
 
 # from tensorflow.python.client import device_lib
 # device_lib.list_local_devices()
-gpus = tf.config.experimental.list_physical_devices('GPU')
+#gpus = tf.config.experimental.list_physical_devices('GPU')
 
 
 # In[20]:
 
 
-gpus
+#gpus
 
 
 # In[17]:
@@ -133,7 +134,8 @@ gpus
 
 
 model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
-model.summary()# tf.keras.utils.plot_model(model,show_shapes=True)
+print('Model Summary')
+print(model.summary())# tf.keras.utils.plot_model(model,show_shapes=True)
 
 
 # In[ ]:
