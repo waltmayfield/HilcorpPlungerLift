@@ -1,62 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
-#import tensorflow as tf
-
-
-
-# In[4]:
-
-#from IPython.core.display import display, HTML 
-#display(HTML("<style>.container { width:100% !important; }</style>")) #Make full screen width
-
-
-# In[5]:
-
-
-# !yes | pip uninstall protobuf
-# !yes | pip uninstall tensorflow
-# !yes | pip install tensorflow-gpu
-
-
-# In[6]:
-
-
-# !pip install --upgrade --force-reinstall tensorflow-gpu
-
-
-# In[5]:
-
-
-# !export CUDA_VISIBLE_DEVICES=0,1
-
-
-# In[6]:
-
-
-# !yes | pip uninstall tensorflow
-#get_ipython().system('pip install --ignore-installed --upgrade tensorflow==2.4.0')
-
-# !pip install --ignore-installed --upgrade tensorflow-gpu==2.4.0
-
-# _ = !pip install wandb
-# # _ = !pip install dirsync
-# import wandb
-# wandb.init()
-
-
-# In[7]:
-
-
 import os; import re; import sys
-#; import importlib
+#import importlib
 
 from datetime import datetime
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import boto3
 import pandas as pd; import numpy as np
 import tensorflow as tf
@@ -81,7 +31,6 @@ print(f'GPUs: {lGpus}')
 
 
 #This is to import local modules
-#sys.path.append('/home/ec2-user/SageMaker/PythonFiles')
 import FunctionsTF as F
 #importlib.reload(F) #In case need to reload module after change
 
@@ -94,67 +43,26 @@ homeDirectory = f's3://{bucket_name}/'
 
 model_name = r'20201216_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
 model_save_location = homeDirectory + r'Models/' + model_name
-
+buffer_size = 8
+batch_size = 2
 
 # outputPath = homeDirectory + r'RecommendedSettings/' + datetime.today().strftime('%Y-%m-%d') + '-RecommendedSettings.csv'
 outputPath = f's3://{bucket_name}/RecommendedSettings/{datetime.today().strftime('%Y-%m-%d')}-RecommendedSettings.csv'
 print(f'Output Settings Path: {outputPath}')
 
-
-# In[19]:
-
-
-# from tensorflow.python.client import device_lib
-# device_lib.list_local_devices()
-#gpus = tf.config.experimental.list_physical_devices('GPU')
-
-
-# In[20]:
-
-
-#gpus
-
-
-# In[17]:
-
-
 #my_strategy = tf.distribute.MirroredStrategy()
-
-
-# In[12]:
-
-
-# mirrored_strategy = tf.distribute.MirroredStrategy(devices=["/gpu:0"],
-#                       cross_device_ops=tf.contrib.distribute.AllReduceCrossDeviceOps(
-#                          all_reduce_alg="hierarchical_copy")
-#                                                    )
-
-
-# In[ ]:
-
 
 model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
 print('Model Summary')
 print(model.summary())# tf.keras.utils.plot_model(model,show_shapes=True)
 
-
-# In[ ]:
-
-
 s3_client = boto3.client('s3')
 s3_resource = boto3.resource('s3')
-
-
-# In[ ]:
 
 
 #Get the column names
 obj = s3_client.get_object(Bucket = bucket_name, Key= 'DataByAPI/0506705008.csv') 
 df = pd.read_csv(obj['Body'], index_col = None, header = 0, dtype = str,nrows = 0)#This loads the column names
-
-
-# In[ ]:
-
 
 #Find index of certain columns
 xCols = df.columns[4:].to_list()
@@ -164,11 +72,6 @@ ventIndex = xCols.index('WELL_VENT_SEC')
 TimeIndex = xCols.index('FDT')
 
 
-# In[ ]:
-
-
-buffer_size = 64
-batch_size = 2
 
 lTFRecordFiles = get_ipython().getoutput('ls /home/ec2-user/SageMaker/TFRecordFiles')
 lTFRecordFiles =  [homeDirectory + r'TFRecordFiles/' + fName for fName in lTFRecordFiles]
@@ -183,15 +86,7 @@ allWellDs = allWellDs.map(lambda x, y, UWI: (tf.reverse(x, axis = [0]),tf.revers
 allWellDs = allWellDs.padded_batch(batch_size, padded_shapes=([None,79],[None,2],[]))
 allWellDs = allWellDs.map(lambda x, y, UWI: (tf.reverse(x, axis = [1]),tf.reverse(y, axis = [1]),UWI))
 
-
-# In[ ]:
-
-
-for x in tqdm.tqdm_notebook(allWellDs.take(5)): pass
-
-
-# In[ ]:
-
+#for x in tqdm.tqdm_notebook(allWellDs.take(5)): pass
 
 def loss_function(prediction, y):
     rateLoss = -1*prediction[:,-1,0]
@@ -206,16 +101,9 @@ def loss_function(prediction, y):
     return plungerLoss+rateLoss
 
 
-# In[3]:
-
-
 gpu_info = get_ipython().getoutput('nvidia-smi')
 gpu_info = '\n'.join(gpu_info)
 print(gpu_info)
-
-
-# In[ ]:
-
 
 dfSuggestions = pd.DataFrame()
 for j, (tX, ty, UWI) in tqdm.tqdm_notebook(enumerate(allWellDs.take(5))):
@@ -317,61 +205,45 @@ for j, (tX, ty, UWI) in tqdm.tqdm_notebook(enumerate(allWellDs.take(5))):
     # break
     # if j > 5: break
 
-
-# In[ ]:
-
-
-dfSuggestions.sort_values(by = ['DMCFD'], ascending = False).head(20)
+print(dfSuggestions.sort_values(by = ['DMCFD'], ascending = False).head(20))
 
 
-# In[ ]:
+# fig, ((axMCF,axPS),(ax1, ax2)) = plt.subplots(2, 2, figsize=(25,10))
 
+# axMCF.hist(dfSuggestions['DMCFD'],bins=100, alpha=0.5, label = 'Change in Gas Rate')
+# axMCF.set_yscale('log')
+# axMCF.set_title('Predicted change in gas rate: {:,.2f} MCFD'.format(dfSuggestions['DMCFD'].sum()))
+# axMCF.legend()
+# axMCF.grid(axis = 'y')
+# axMCF.set_xlabel('Change in Gas Rate');axMCF.set_ylabel('Well Count');
 
-fig, ((axMCF,axPS),(ax1, ax2)) = plt.subplots(2, 2, figsize=(25,10))
+# axPS.hist(dfSuggestions['PredPSSuggested'],bins=100, alpha=0.5, label = 'Suggested Policy Predicted Result')
+# axPS.hist(dfSuggestions['PredPSOriginal'],bins=100, alpha=0.5, label = 'Current Value')
+# axPS.set_yscale('log')
+# axPS.set_title('Plunger Speed Histogram')
+# axPS.legend()
+# axPS.grid(axis = 'y')
+# axPS.set(xlim=(0, 1500))#, ylim=(-4.5e3, -2e3))
+# axPS.set_xlabel('Plunger Speed');axPS.set_ylabel('Well Count');
 
-axMCF.hist(dfSuggestions['DMCFD'],bins=100, alpha=0.5, label = 'Change in Gas Rate')
-axMCF.set_yscale('log')
-axMCF.set_title('Predicted change in gas rate: {:,.2f} MCFD'.format(dfSuggestions['DMCFD'].sum()))
-axMCF.legend()
-axMCF.grid(axis = 'y')
-axMCF.set_xlabel('Change in Gas Rate');axMCF.set_ylabel('Well Count');
+# ax1.hist(dfSuggestions['SuggestedCsgMinusLine'].clip(0,200),bins=100, alpha=0.5, label = 'Suggested Value')
+# ax1.hist(dfSuggestions['LastCsgMinusLine'].clip(0,200),bins=100, alpha=0.5, label = 'Current Value')
+# ax1.set_yscale('log')
+# ax1.set_title('CSG-Line Histogram')
+# ax1.legend()
+# ax1.grid(axis = 'y')
+# # ax1.set(xlim=(0, 200))
+# ax1.set_xlabel('Casing - Line Pressure Open Trigger');ax1.set_ylabel('Well Count');
 
-axPS.hist(dfSuggestions['PredPSSuggested'],bins=100, alpha=0.5, label = 'Suggested Policy Predicted Result')
-axPS.hist(dfSuggestions['PredPSOriginal'],bins=100, alpha=0.5, label = 'Current Value')
-axPS.set_yscale('log')
-axPS.set_title('Plunger Speed Histogram')
-axPS.legend()
-axPS.grid(axis = 'y')
-axPS.set(xlim=(0, 1500))#, ylim=(-4.5e3, -2e3))
-axPS.set_xlabel('Plunger Speed');axPS.set_ylabel('Well Count');
-
-ax1.hist(dfSuggestions['SuggestedCsgMinusLine'].clip(0,200),bins=100, alpha=0.5, label = 'Suggested Value')
-ax1.hist(dfSuggestions['LastCsgMinusLine'].clip(0,200),bins=100, alpha=0.5, label = 'Current Value')
-ax1.set_yscale('log')
-ax1.set_title('CSG-Line Histogram')
-ax1.legend()
-ax1.grid(axis = 'y')
-# ax1.set(xlim=(0, 200))
-ax1.set_xlabel('Casing - Line Pressure Open Trigger');ax1.set_ylabel('Well Count');
-
-ax2.hist(dfSuggestions['SuggestedCRPctEndFlow'],bins=100, alpha=0.5, label = 'Suggested Value')
-ax2.hist(dfSuggestions['LastCRPctEndFlow'],bins=100, alpha=0.5, label = 'Current Value')
-ax2.set_yscale('log')
-ax2.set_title('Crit Flow Pct End Flow Histogram')
-ax2.legend()
-ax2.grid(axis = 'y')
-# ax.set(xlim=(0, 200))#, ylim=(-4.5e3, -2e3))
-ax2.set_xlabel('Critical Flow Percent Close Trigger');ax2.set_ylabel('Well Count');
-
-
-# In[ ]:
-
+# ax2.hist(dfSuggestions['SuggestedCRPctEndFlow'],bins=100, alpha=0.5, label = 'Suggested Value')
+# ax2.hist(dfSuggestions['LastCRPctEndFlow'],bins=100, alpha=0.5, label = 'Current Value')
+# ax2.set_yscale('log')
+# ax2.set_title('Crit Flow Pct End Flow Histogram')
+# ax2.legend()
+# ax2.grid(axis = 'y')
+# # ax.set(xlim=(0, 200))#, ylim=(-4.5e3, -2e3))
+# ax2.set_xlabel('Critical Flow Percent Close Trigger');ax2.set_ylabel('Well Count');
 
 dfSuggestions.to_csv(outputPath, index = False)#Save the data frame 
-
-
-# In[ ]:
-
-
 
 
