@@ -39,7 +39,7 @@ import FunctionsTF as F
 
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 
-homeDirectory = f'~/EBSPlungerFiles/'
+homeDirectory = f'/EBSPlungerFiles/'
 
 model_name = r'20201216_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
 model_save_location = homeDirectory + r'Models/' + model_name
@@ -47,7 +47,7 @@ buffer_size = 8
 batch_size = 2
 
 # outputPath = homeDirectory + r'RecommendedSettings/' + datetime.today().strftime('%Y-%m-%d') + '-RecommendedSettings.csv'
-outputPath = f's3://{bucket_name}/RecommendedSettings/{datetime.today().strftime('%Y-%m-%d')}-RecommendedSettings.csv'
+outputPath = f"s3://{bucket_name}/RecommendedSettings/{datetime.today().strftime('%Y-%m-%d')}-RecommendedSettings.csv"
 print(f'Output Settings Path: {outputPath}')
 
 #my_strategy = tf.distribute.MirroredStrategy()
@@ -73,7 +73,8 @@ TimeIndex = xCols.index('FDT')
 
 
 
-lTFRecordFiles = get_ipython().getoutput('ls /home/ec2-user/SageMaker/TFRecordFiles')
+#lTFRecordFiles = get_ipython().getoutput('ls /home/ec2-user/SageMaker/TFRecordFiles')
+lTFRecordFiles = os.listdir(homeDirectory+r'TFRecordFiles/')
 lTFRecordFiles =  [homeDirectory + r'TFRecordFiles/' + fName for fName in lTFRecordFiles]
 
 raw_dataset = tf.data.TFRecordDataset(lTFRecordFiles)
@@ -101,12 +102,12 @@ def loss_function(prediction, y):
     return plungerLoss+rateLoss
 
 
-gpu_info = get_ipython().getoutput('nvidia-smi')
-gpu_info = '\n'.join(gpu_info)
-print(gpu_info)
+#gpu_info = get_ipython().getoutput('nvidia-smi')
+#gpu_info = '\n'.join(gpu_info)
+#print(gpu_info)
 
 dfSuggestions = pd.DataFrame()
-for j, (tX, ty, UWI) in tqdm.tqdm_notebook(enumerate(allWellDs.take(5))):
+for j, (tX, ty, UWI) in tqdm.tqdm(enumerate(allWellDs.take(5))):
     # break
     # if j >10: break
     X = tX.numpy()
