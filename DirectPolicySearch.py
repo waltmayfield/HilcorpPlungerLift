@@ -46,8 +46,9 @@ model_save_location = homeDirectory + r'Models/' + model_name
 buffer_size = 8
 batch_size = 2
 
-# outputPath = homeDirectory + r'RecommendedSettings/' + datetime.today().strftime('%Y-%m-%d') + '-RecommendedSettings.csv'
-outputPath = f"s3://{bucket_name}/RecommendedSettings/{datetime.today().strftime('%Y-%m-%d')}-RecommendedSettings.csv"
+outputPath = homeDirectory + r'RecommendedSettings/' + datetime.today().strftime('%Y-%m-%d') + '-RecommendedSettings.csv'
+# outputPath = f"s3://{bucket_name}/RecommendedSettings/{datetime.today().strftime('%Y-%m-%d')}-RecommendedSettings.csv"
+
 print(f'Output Settings Path: {outputPath}')
 
 #my_strategy = tf.distribute.MirroredStrategy()
