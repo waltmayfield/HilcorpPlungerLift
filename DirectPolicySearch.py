@@ -32,7 +32,7 @@ model_name = r'20201216_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
 
 model_save_location = homeDirectory + r'Models/' + model_name
 buffer_size = 8
-batch_size = 2
+batch_size = 3
 
 outputPath = homeDirectory + r'RecommendedSettings/' + datetime.today().strftime('%Y-%m-%d') + '-RecommendedSettings.csv'
 S3outputPath = f"s3://{bucket_name}/RecommendedSettings/{datetime.today().strftime('%Y-%m-%d')}-RecommendedSettings.csv"
@@ -111,7 +111,7 @@ for j, (tX, ty, UWI) in tqdm.tqdm(enumerate(allWellDs), total = int(np.ceil(num_
     y = ty.numpy()
     UWIs = list(map(lambda x: x.decode('utf-8'),UWI.numpy()))
 
-    if X.shape[0] == 0 or len(UWIs)!=X.shape[0]: continue
+    if X.shape[0] == 0 or X.shape[1] == 0 or len(UWIs)!=X.shape[0]: continue
 
     # print(UWIs)
     print('X shape: {}'.format(X.shape))
