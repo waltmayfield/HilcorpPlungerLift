@@ -18,36 +18,25 @@ import tqdm
 
 pd.set_option("display.precision", 1)
 
-
-# In[8]:
-
-
 print(f'TF version: {tf.__version__}')
 lGpus = tf.config.experimental.list_physical_devices('GPU')
 print(f'GPUs: {lGpus}')
-
-
-# In[9]:
-
 
 #This is to import local modules
 import FunctionsTF as F
 #importlib.reload(F) #In case need to reload module after change
 
-
-# In[10]:
-
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
-
 homeDirectory = f'/EBSPlungerFiles/'
-
 model_name = r'20201216_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
+
 model_save_location = homeDirectory + r'Models/' + model_name
 buffer_size = 8
 batch_size = 2
 
 outputPath = homeDirectory + r'RecommendedSettings/' + datetime.today().strftime('%Y-%m-%d') + '-RecommendedSettings.csv'
-# outputPath = f"s3://{bucket_name}/RecommendedSettings/{datetime.today().strftime('%Y-%m-%d')}-RecommendedSettings.csv"
+S3outputPath = f"s3://{bucket_name}/RecommendedSettings/{datetime.today().strftime('%Y-%m-%d')}-RecommendedSettings.csv"
+S3outputKey = f"RecommendedSettings/{datetime.today().strftime('%Y-%m-%d')}-RecommendedSettings.csv"
 
 print(f'Output Settings Path: {outputPath}')
 
@@ -77,6 +66,13 @@ TimeIndex = xCols.index('FDT')
 #lTFRecordFiles = get_ipython().getoutput('ls /home/ec2-user/SageMaker/TFRecordFiles')
 lTFRecordFiles = os.listdir(homeDirectory+r'TFRecordFiles/')
 lTFRecordFiles =  [homeDirectory + r'TFRecordFiles/' + fName for fName in lTFRecordFiles]
+
+def count_data_items(filenames):
+    'Counts the records in each file name'
+    n = [int(re.compile(r"-([0-9]*)-Records\.").search(filename).group(1)) for filename in filenames]
+#     print(n)
+    return np.sum(n)
+num_examples = count_data_items(lTFRecordFiles)
 
 raw_dataset = tf.data.TFRecordDataset(lTFRecordFiles)
 allWellDs = raw_dataset.map(F.parse_raw_examples_UWI)
@@ -108,7 +104,7 @@ def loss_function(prediction, y):
 #print(gpu_info)
 
 dfSuggestions = pd.DataFrame()
-for j, (tX, ty, UWI) in tqdm.tqdm(enumerate(allWellDs.take(5))):
+for j, (tX, ty, UWI) in tqdm.tqdm(enumerate(allWellDs.take(5)), total = int(np.ceil(num_examples/batch_size))):
     # break
     # if j >10: break
     X = tX.numpy()
@@ -248,4 +244,4 @@ print(dfSuggestions.sort_values(by = ['DMCFD'], ascending = False).head(20))
 
 dfSuggestions.to_csv(outputPath, index = False)#Save the data frame 
 
-
+s3_client.upload_file(outputPath,bucket_name,S3outputKey)
