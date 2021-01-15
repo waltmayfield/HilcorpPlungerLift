@@ -15,6 +15,15 @@ print(f'Tensorflow version: {tf.__version__}')
 lGpus = tf.config.experimental.list_physical_devices('GPU')
 print(f'GPUs: {lGpus}')
 
+######################### Training Parameters ########################
+training_epochs = 100
+validation_split = 0.1
+batch_size = 2
+num_parallel_calls = 8
+buffer_size = 8
+######################################################################
+
+
 homeDirectory = f'/AttachedVol/EBSPlungerFiles/'
 
 model_name = r'20201216_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
@@ -40,12 +49,6 @@ latest_file = max(list_of_files, key=os.path.getctime) #This gets the most recen
 lTFRecordFiles = [latest_file]
 print(f'Most Recent TFRecord File: {lTFRecordFiles}')
 
-######################### Training Parameters ########################
-validation_split = 0.1
-batch_size = 2
-num_parallel_calls = 8
-buffer_size = 8
-######################################################################
 
 def count_data_items(filenames):
     'Counts the records in each file name'
@@ -111,7 +114,7 @@ steps_per_epoch = int(np.ceil(numTrainWells/batch_size))
 
 model.fit(x = trainDs.repeat(epochs),
           validation_data=validDs,
-          epochs = 1000,
+          epochs = training_epochs,
           steps_per_epoch = steps_per_epoch,
           use_multiprocessing=False,
           callbacks = [
