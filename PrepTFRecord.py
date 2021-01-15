@@ -120,7 +120,7 @@ def convert_ds_to_TFRecord(ds, num_elements, name, directory):
     filename = os.path.join(directory, f'{name}-{num_elements}-Records.tfrecords')
     print(f'Writing {filename}')
     with tf.io.TFRecordWriter(filename) as writer: 
-        for X, Y, path in tqdm.tqdm_notebook(ds):
+        for X, Y, path in tqdm.tqdm(ds):
             UWI = path.numpy()[-14:-4]
             num_time_steps = X.shape[0]
             # Serialize the tensors
