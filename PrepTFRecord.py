@@ -149,8 +149,8 @@ allWellDs = raw_dataset.map(process_path)
 
 ######Remove all files currently in the TF Record Directory
 TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
-#for f in os.listdir(TFRecordDirectory):
-#    os.remove(os.path.join(TFRecordDirectory, f))
+for f in os.listdir(TFRecordDirectory):
+    os.remove(os.path.join(TFRecordDirectory, f))
 
 #Add the new .tfrecord file to that directory
 outputFileName = convert_ds_to_TFRecord(allWellDs,num_examples,'DatasetOneExamplePerWellWithUWI',TFRecordDirectory)
