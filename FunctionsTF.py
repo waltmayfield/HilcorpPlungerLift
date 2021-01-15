@@ -1,6 +1,6 @@
 from tensorflow import keras
 import tensorflow as tf
-import pandas as pd, numpy as np, os
+import numpy as np, os
 
 if __name__ == '__main__':
     print("<> Running the module as a script! <>")
