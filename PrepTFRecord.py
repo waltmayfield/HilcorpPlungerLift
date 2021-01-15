@@ -119,7 +119,6 @@ def convert_ds_to_TFRecord(ds, num_elements, name, directory):
 #     num_elements = ds.reduce(np.int64(0), lambda x, _: x + 1).numpy()
     filename = os.path.join(directory, f'{name}-{num_elements}-Records.tfrecords')
     print(f'Writing {filename}')
-    return filename
     with tf.io.TFRecordWriter(filename) as writer: 
         for X, Y, path in tqdm.tqdm_notebook(ds):
             UWI = path.numpy()[-14:-4]
@@ -149,7 +148,7 @@ raw_dataset = tf.data.Dataset.list_files(DataFileNames)
 allWellDs = raw_dataset.map(process_path)
 
 ######Remove all files currently in the TF Record Directory
-#TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
+TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
 #for f in os.listdir(TFRecordDirectory):
 #    os.remove(os.path.join(TFRecordDirectory, f))
 
@@ -158,6 +157,7 @@ outputFileName = convert_ds_to_TFRecord(allWellDs,num_examples,'DatasetOneExampl
 
 
 # !aws s3 cp /home/ec2-user/SageMaker/TFRecordFiles/DatasetOneExamplePerWellWithUWI-5138-Records.tfrecords s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ 
-S3outputKey = f'TFRecordFiles/' + outputFileName
+S3outputKey = outputFileName[len(homeDirectory):]
+print(f'S3outputKey: {S3outputKey}')
 s3_client = boto3.client('s3')
 s3_client.upload_file(outputFileName,bucket_name,S3outputKey)
