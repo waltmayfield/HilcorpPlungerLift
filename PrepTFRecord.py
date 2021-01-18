@@ -5,7 +5,7 @@ import os
 import boto3
 import pandas as pd; import numpy as np
 import tensorflow as tf
-
+from datetime import datetime
 import tqdm
 
 print(f'Tensorflow version: {tf.__version__}')
