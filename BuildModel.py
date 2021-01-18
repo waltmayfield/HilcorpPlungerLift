@@ -1,4 +1,6 @@
 
+from datetime import datetime
+import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, GRU, LSTM, Dense, TimeDistributed, Activation, BatchNormalization, Concatenate, LeakyReLU
@@ -9,10 +11,8 @@ import FunctionsTF as F
 print(f'Tensorflow version: {tf.__version__}')
 
 
-homeDirectory = f'/AttachedVol/EBSPlungerFiles/'
-model_name = r'20201216_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
-model_save_location = homeDirectory + r'Models/' + model_name
-
+homeDirectory = f'~/EBSPlungerFiles/'
+sModelDescription = r'LSTM_Skip_resBlock.h5'
 
 n_channels = 79
 
@@ -50,7 +50,14 @@ model = Model(inputs = inputs, outputs = out)
 print('###### Model Summary ########')
 print(model.summary())
 
-model.save(model_save_location)
+trainableVars = np.sum([np.prod(v.get_shape().as_list()) for v in model.trainable_variables])
+sModelStats = f"{datetime.today().strftime('%Y-%m-%d')}_{trainableVars}-TrainableVars_"
+sModelName = sModelStats + sModelDescription
+sModelSaveLocation = homeDirectory + r'Models/' + sModelName
+
+print(f'Saving model to {sModelSaveLocation}')
+
+model.save(sModelSaveLocation)
 
 ### C:\Users\wmayfield\Documents\HilcorpPlungerLift
 

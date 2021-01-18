@@ -16,18 +16,20 @@ from tensorflow.keras import backend as K
 
 import tqdm
 
+#This is to import local modules
+import FunctionsTF as F
+#importlib.reload(F) #In case need to reload module after change
+
 pd.set_option("display.precision", 1)
 
 print(f'TF version: {tf.__version__}')
 lGpus = tf.config.experimental.list_physical_devices('GPU')
 print(f'GPUs: {lGpus}')
 
-#This is to import local modules
-import FunctionsTF as F
-#importlib.reload(F) #In case need to reload module after change
+
 
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
-homeDirectory = f'/AttachedVol/EBSPlungerFiles/'
+homeDirectory = f'~/EBSPlungerFiles/'
 model_name = r'20201216_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
 
 model_save_location = homeDirectory + r'Models/' + model_name
@@ -39,6 +41,24 @@ S3outputPath = f"s3://{bucket_name}/RecommendedSettings/{datetime.today().strfti
 S3outputKey = f"RecommendedSettings/{datetime.today().strftime('%Y-%m-%d')}-RecommendedSettings.csv"
 
 print(f'Output Settings Path: {outputPath}')
+
+######Remove all files currently in the TF Record Directory
+TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
+for f in os.listdir(TFRecordDirectory):
+    os.remove(os.path.join(TFRecordDirectory, f))
+
+#Pull up to date Model
+os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/Models/ ~/EBSPlungerFiles/Models/')
+#Pull up to date Data
+sLatestDataKey=os.popen("aws s3 ls s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ --recursive | sort | tail -n 1 | awk '{print $4}'").read()[:-1]#The -1 removes the new line character
+sS3URILatestDataKey = f"s3://{bucket_name}/{sLatestDataKey}"
+os.system(f'aws s3 cp {sS3URILatestDataKey} ~/EBSPlungerFiles/TFRecordFiles/')
+
+# os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/DataByAPI/ ~/AttachedVol/EBSPlungerFiles/DataByAPI/')
+
+
+
+
 
 #my_strategy = tf.distribute.MirroredStrategy()
 

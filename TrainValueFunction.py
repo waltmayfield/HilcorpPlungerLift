@@ -1,5 +1,6 @@
 
 import re; import sys; import importlib; import tqdm; import os; import time; import glob
+import pathlib
 import numpy as np; import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
@@ -23,16 +24,28 @@ num_parallel_calls = 8
 buffer_size = 8
 ######################################################################
 
-
 homeDirectory = f'/AttachedVol/EBSPlungerFiles/'
 
 model_name = r'20201216_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
 model_save_location = homeDirectory + r'Models/' + model_name
 output_model_save_location = homeDirectory + r'Models/' + r'20201216_460k_Param_LSTM_Skip_resBlock.h5'
 
-historyPath = homeDirectory + r'LossCurves/' + r'20201216History.csv'
+# historyPath = homeDirectory + r'LossCurves/' + r'20201216History.csv'
+historyPath = f"s3://{bucket_name}/LossCurves/{}-RecommendedSettings.csv"
 
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
+
+######Remove all files currently in the TF Record Directory
+TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
+for f in os.listdir(TFRecordDirectory):
+    os.remove(os.path.join(TFRecordDirectory, f))
+
+#Pull up to date Models
+os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/Models/ ~/EBSPlungerFiles/Models/')
+#Pull up to date Data
+sLatestDataKey=os.popen("aws s3 ls s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ --recursive | sort | tail -n 1 | awk '{print $4}'").read()[:-1]#The -1 removes the new line character
+sS3URILatestDataKey = f"s3://{bucket_name}/{sLatestDataKey}"
+os.system(f'aws s3 cp {sS3URILatestDataKey} ~/EBSPlungerFiles/TFRecordFiles/')
 
 #This creates a new hitory df if one does not already exist
 if not os.path.isfile(historyPath):
