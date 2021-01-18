@@ -56,10 +56,6 @@ os.system(f'aws s3 cp {sS3URILatestDataKey} ~/EBSPlungerFiles/TFRecordFiles/')
 
 # os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/DataByAPI/ ~/AttachedVol/EBSPlungerFiles/DataByAPI/')
 
-
-
-
-
 #my_strategy = tf.distribute.MirroredStrategy()
 
 model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
