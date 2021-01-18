@@ -26,12 +26,12 @@ buffer_size = 8
 
 homeDirectory = f'/AttachedVol/EBSPlungerFiles/'
 
-model_name = r'20201216_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
+model_name = r'2020-12-16_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
 model_save_location = homeDirectory + r'Models/' + model_name
 output_model_save_location = homeDirectory + r'Models/' + r'20201216_460k_Param_LSTM_Skip_resBlock.h5'
 
 # historyPath = homeDirectory + r'LossCurves/' + r'20201216History.csv'
-historyPath = f"s3://{bucket_name}/LossCurves/{}-RecommendedSettings.csv"
+historyPath = f"s3://{bucket_name}/LossCurves/{model_name[:10]}-RecommendedSettings.csv"
 
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 
@@ -51,7 +51,10 @@ os.system(f'aws s3 cp {sS3URILatestDataKey} ~/EBSPlungerFiles/TFRecordFiles/')
 if not os.path.isfile(historyPath):
     print('Creating new history DF at {}'.format(time.localtime()))
     pd.DataFrame(columns = ['loss', 'MCF_metric', 'plunger_speed_metric', 'val_loss', 'val_MCF_metric', 'val_plunger_speed_metric']).to_csv(historyPath, index = False)
-    
+
+#Download the current history path
+dfHistory = pd.read_csv(historyPath)
+
 model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
 print('########## Model Summary #############')
 print(model.summary())# tf.keras.utils.plot_model(model,show_shapes=True)
@@ -102,14 +105,16 @@ print('Clocking validation DS Speed')
 for x in tqdm.tqdm(validDs.take(20)): pass #This is to clock data set speed
 
 
-
 ####### Here are the Check Points ######
 class EpochLogger(tf.keras.callbacks.Callback):
     def __init__(self,historyPath):
         self.historyPath = historyPath
+        self.historyDf = dfHistory
     def on_epoch_end(self,epoch,logs=None):#This saves the loss data
         lossDf = pd.DataFrame(logs, index = [0]) #Turns logs into dataframe
-        lossDf.to_csv(self.historyPath, mode = 'a', header = False, index = False) #Appends to existing csv file
+        self.historyDf.append(lossDf)#Append the new row
+        self.historyDf.to_csv(self.historyPath) #Replace the current loss curve file
+
 
 model_checkpoint = ModelCheckpoint(output_model_save_location, 
                                    monitor = 'loss', 
