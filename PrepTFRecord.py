@@ -14,8 +14,8 @@ homeDirectory = f'/EBSPlungerFiles/'
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 prefix = 'DataByAPI/'
 
-#sync Data
-os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/DataByAPI/ ~/EBSPlungerFiles/DataByAPI/')
+# #sync Data
+# os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/DataByAPI/ ~/EBSPlungerFiles/DataByAPI/')
 
 #This is a new path which may be more efficient for training
 def csv_to_tensor(file_path):
