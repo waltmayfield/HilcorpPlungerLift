@@ -154,7 +154,7 @@ for f in os.listdir(TFRecordDirectory):
     os.remove(os.path.join(TFRecordDirectory, f))
 
 #Add the new .tfrecord file to that directory
-outputFileName = convert_ds_to_TFRecord(allWellDs,num_examples,f'{datetime.today().strftime('%Y-%m-%d')}_DatasetOneExamplePerWellWithUWI',TFRecordDirectory)
+outputFileName = convert_ds_to_TFRecord(allWellDs,num_examples,f"{datetime.today().strftime('%Y-%m-%d')}_DatasetOneExamplePerWellWithUWI",TFRecordDirectory)
 
 # !aws s3 cp /home/ec2-user/SageMaker/TFRecordFiles/DatasetOneExamplePerWellWithUWI-5138-Records.tfrecords s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ 
 S3outputKey = outputFileName[len(homeDirectory):]
