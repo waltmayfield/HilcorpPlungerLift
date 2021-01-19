@@ -30,8 +30,6 @@ bucket_name = 'hilcorp-l48operations-plunger-lift-temp' #Production version
 print(os.system(f'aws sso login --profile {sProfile}'))
 session = boto3.Session(profile_name=sProfile)#.client('sts').get_caller_identity()
 
-# bucket_name = 'plunger-lift-data-test'
-
 main_prefix = 'DataByAPI/'  #This is for the main data set
 prefix = 'TempData/'  #This is for new data. It will be added to the main data set with lambda
 
