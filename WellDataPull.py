@@ -47,8 +47,7 @@ dsn = """(DESCRIPTION =
   )
     """
 
-connection = cx_Oracle.connect("wmayfield", "Chang3me_plz", dsn, encoding="UTF-8")
-
+connection = cx_Oracle.connect("wmayfield", os.environ["ORACLEPSWD"], dsn, encoding="UTF-8")
 
 def loadSQL(sql):#Load Oracle SQL Query
     cursor = connection.cursor()
