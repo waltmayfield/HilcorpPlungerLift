@@ -1,0 +1,43 @@
+{
+  "Comment": "A Hello World example of the Amazon States Language using Pass states",
+  "StartAt": "Start t2.xlarge",
+  "Version":"1.0",
+  "TimeoutSeconds": 5,
+  "States": {
+    "Start t2.xlarge": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:us-west-2:446356438225:activity:LaunchEC2",
+      "Next": "Run TF Record Builder"
+    },
+    
+    "Run TF Record Builder": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:us-west-2:446356438225:activity:LaunchEC2",
+      "Next": "Shut Down t2.xlarge"
+    },
+    
+    "Shut Down t2.xlarge": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:us-west-2:446356438225:activity:LaunchEC2",
+      "Next": "Start Spot P3.2xlarge"
+    },
+    
+    "Start Spot P3.2xlarge": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:us-west-2:446356438225:activity:LaunchEC2",
+      "Next": "Run Policy Search"
+    },
+      
+    "Run Policy Search": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:us-west-2:446356438225:activity:LaunchEC2",
+      "Next": "Stop Spot P3.2xlarge"
+    },
+    
+    "Stop Spot P3.2xlarge": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:us-west-2:446356438225:activity:LaunchEC2",
+      "End" :true
+    }
+  }
+}

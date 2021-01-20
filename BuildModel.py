@@ -13,11 +13,14 @@ print(f'Tensorflow version: {tf.__version__}')
 
 sModelDescription = r'LSTM_Skip_resBlock.h5'
 
+##################### Authentication #########################################
 #This is where the session will look for the profile name
-os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
+# os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
 sProfile = 'my-sso-profile-production' #Production version
 print(os.system(f'aws sso login --profile {sProfile}'))
-session = boto3.Session(profile_name=sProfile)#.client('sts').get_caller_identity()
+session = boto3.Session(profile_name=sProfile)
+################################################################################
+
 
 # homeDirectory = f'~/EBSPlungerFiles/'
 homeDirectory = tempfile.gettempdir()
