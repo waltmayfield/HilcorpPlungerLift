@@ -1,18 +1,28 @@
 
-from datetime import datetime
+from datetime import datetime; import tempfile, os
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, GRU, LSTM, Dense, TimeDistributed, Activation, BatchNormalization, Concatenate, LeakyReLU
 from tensorflow.keras import regularizers
-import FunctionsTF as F
+import boto3
 
+import FunctionsTF as F
 
 print(f'Tensorflow version: {tf.__version__}')
 
-
-homeDirectory = f'~/EBSPlungerFiles/'
 sModelDescription = r'LSTM_Skip_resBlock.h5'
+
+#This is where the session will look for the profile name
+os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
+sProfile = 'my-sso-profile-production' #Production version
+print(os.system(f'aws sso login --profile {sProfile}'))
+session = boto3.Session(profile_name=sProfile)#.client('sts').get_caller_identity()
+
+# homeDirectory = f'~/EBSPlungerFiles/'
+homeDirectory = tempfile.gettempdir()
+
+bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 
 n_channels = 79
 
@@ -53,11 +63,16 @@ print(model.summary())
 trainableVars = np.sum([np.prod(v.get_shape().as_list()) for v in model.trainable_variables])
 sModelStats = f"{datetime.today().strftime('%Y-%m-%d')}_{trainableVars}-TrainableVars_"
 sModelName = sModelStats + sModelDescription
-sModelSaveLocation = homeDirectory + r'Models/' + sModelName
+sModelSaveLocation = os.path.join(homeDirectory, sModelName)
 
 print(f'Saving model to {sModelSaveLocation}')
 
 model.save(sModelSaveLocation)
+
+S3outputKey = r"Models/" + sModelName
+
+s3_client = session.client('s3')
+s3_client.upload_file(sModelSaveLocation,bucket_name,S3outputKey)
 
 ### C:\Users\wmayfield\Documents\HilcorpPlungerLift
 
