@@ -1,43 +1,49 @@
 {
   "Comment": "A Hello World example of the Amazon States Language using Pass states",
-  "StartAt": "Start t2.xlarge",
-  "Version":"1.0",
-  "TimeoutSeconds": 5,
+  "StartAt": "Start Data Prep Instance",
+  "Version": "1.0",
+  "TimeoutSeconds": 60,
   "States": {
-    "Start t2.xlarge": {
+    "Start Data Prep Instance": {
       "Type": "Task",
-      "Resource": "arn:aws:states:us-west-2:446356438225:activity:LaunchEC2",
-      "Next": "Run TF Record Builder"
+      "Resource": "arn:aws:lambda:us-west-2:446356438225:function:StartStopEC2",
+      "Parameters": {
+        "InstanceIds": [
+          "i-005ec5286b50e7307"
+        ],
+        "action": "start"
+      },
+      "Next": "Run Data Prep Bash Commands"
     },
-    
-    "Run TF Record Builder": {
+    "Run Data Prep Bash Commands": {
       "Type": "Task",
-      "Resource": "arn:aws:states:us-west-2:446356438225:activity:LaunchEC2",
-      "Next": "Shut Down t2.xlarge"
+      "Resource": "arn:aws:lambda:us-west-2:446356438225:function:hilcorp-lower48-plunger-send-bash-scripts-to-EC2",
+      "Parameters": {
+        "commands": [
+          "cd ~/EBSPlungerFiles/HilcorpPlungerLift",
+          "git pull origin main",
+          "cd ~/",
+          "aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/DataByAPI/ ~/EBSPlungerFiles/DataByAPI/",
+          "docker container start testContainer",
+          "docker exec testContainer python ~/EBSPlungerFiles/HilcorpPlungerLift/PrepTFRecord.py",
+          "docker container stop testContainer"
+        ],
+        "InstanceIds": [
+          "i-005ec5286b50e7307"
+        ]
+      },
+      "Next": "Stop Data Prep Instance"
     },
-    
-    "Shut Down t2.xlarge": {
+    "Stop Data Prep Instance": {
       "Type": "Task",
-      "Resource": "arn:aws:states:us-west-2:446356438225:activity:LaunchEC2",
-      "Next": "Start Spot P3.2xlarge"
-    },
-    
-    "Start Spot P3.2xlarge": {
-      "Type": "Task",
-      "Resource": "arn:aws:states:us-west-2:446356438225:activity:LaunchEC2",
-      "Next": "Run Policy Search"
-    },
-      
-    "Run Policy Search": {
-      "Type": "Task",
-      "Resource": "arn:aws:states:us-west-2:446356438225:activity:LaunchEC2",
-      "Next": "Stop Spot P3.2xlarge"
-    },
-    
-    "Stop Spot P3.2xlarge": {
-      "Type": "Task",
-      "Resource": "arn:aws:states:us-west-2:446356438225:activity:LaunchEC2",
-      "End" :true
+      "Resource": "arn:aws:lambda:us-west-2:446356438225:function:StartStopEC2",
+      "Parameters": {
+        "InstanceIds": [
+          "i-005ec5286b50e7307"
+        ],
+        "action": "stop"
+      },
+      "End": true
     }
   }
 }

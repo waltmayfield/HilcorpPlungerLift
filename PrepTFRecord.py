@@ -10,7 +10,7 @@ import tqdm
 
 print(f'Tensorflow version: {tf.__version__}')
 
-homeDirectory = f'/EBSPlungerFiles/'
+homeDirectory = f'~/EBSPlungerFiles/'
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 prefix = 'DataByAPI/'
 
@@ -146,7 +146,9 @@ print(f'{num_examples} wells to write to file')
 
 DataFileNames = [homeDirectory + r'DataByAPI/*.csv']
 raw_dataset = tf.data.Dataset.list_files(DataFileNames)
-allWellDs = raw_dataset.map(process_path)
+
+######## The take(5) is only for test purposes #######
+allWellDs = raw_dataset.map(process_path).take(5)
 
 ######Remove all files currently in the TF Record Directory
 TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
