@@ -1,11 +1,11 @@
 #!/bin/bash
-sudo amazon-linux-extras install docker
-sudo service docker start
-sudo usermod -a -G docker ec2-user
-sudo chkconfig docker on
-sudo yum install -y git
-sudo reboot
+amazon-linux-extras install docker
+service docker start
+usermod -a -G docker ec2-user
+chkconfig docker on
+yum install -y git
 
+#Not sure if these will be accessable to ec2-user if made by root
 mkdir EBSPlungerFiles
 cd EBSPlungerFiles
 git clone https://github.com/waltmayfield/HilcorpPlungerLift
@@ -21,3 +21,4 @@ docker exec testContainer pip install tqdm
 
 docker container stop testContainer
 
+reboot
