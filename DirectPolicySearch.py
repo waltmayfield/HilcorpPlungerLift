@@ -28,7 +28,7 @@ print(f'GPUs: {lGpus}')
 
 
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
-homeDirectory = f'/EBSPlungerFiles/'
+homeDirectory = r'/EBSPlungerFiles/'
 model_name = r'2020-12-16_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
 
 model_save_location = homeDirectory + r'Models/' + model_name
