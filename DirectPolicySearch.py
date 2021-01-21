@@ -43,15 +43,15 @@ print(f'Output Settings Path: {outputPath}')
 
 ######Remove all files currently in the TF Record Directory
 TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
-for f in os.listdir(TFRecordDirectory):
-    os.remove(os.path.join(TFRecordDirectory, f))
+# for f in os.listdir(TFRecordDirectory):
+#     os.remove(os.path.join(TFRecordDirectory, f))
 
-#Pull up to date Model
-os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/Models/ ~/EBSPlungerFiles/Models/')
+# #Pull up to date Model
+# os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/Models/ ~/EBSPlungerFiles/Models/')
 #Pull up to date Data
-sLatestDataKey=os.popen("aws s3 ls s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ --recursive | sort | tail -n 1 | awk '{print $4}'").read()[:-1]#The -1 removes the new line character
-sS3URILatestDataKey = f"s3://{bucket_name}/{sLatestDataKey}"
-os.system(f'aws s3 cp {sS3URILatestDataKey} ~/EBSPlungerFiles/TFRecordFiles/')
+# sLatestDataKey=os.popen("aws s3 ls s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ --recursive | sort | tail -n 1 | awk '{print $4}'").read()[:-1]#The -1 removes the new line character
+# sS3URILatestDataKey = f"s3://{bucket_name}/{sLatestDataKey}"
+# os.system(f'aws s3 cp {sS3URILatestDataKey} ~/EBSPlungerFiles/TFRecordFiles/')
 
 # os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/DataByAPI/ ~/AttachedVol/EBSPlungerFiles/DataByAPI/')
 
