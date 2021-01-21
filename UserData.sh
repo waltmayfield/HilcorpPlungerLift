@@ -5,6 +5,10 @@ usermod -a -G docker ec2-user
 chkconfig docker on
 yum install -y git
 
+#This is ment to enable GPU monitoring
+pip2.7 install nvidia-ml-py boto3
+python2.7 gpumon.py
+
 #Not sure if these will be accessable to ec2-user if made by root
 mkdir /home/ubuntu/EBSPlungerFiles
 cd /home/ubuntu/EBSPlungerFiles
