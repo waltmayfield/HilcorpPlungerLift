@@ -10,7 +10,7 @@ import tqdm
 
 print(f'Tensorflow version: {tf.__version__}')
 
-homeDirectory = f'~/EBSPlungerFiles/'
+homeDirectory = f'EBSPlungerFiles/'
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 prefix = 'DataByAPI/'
 
