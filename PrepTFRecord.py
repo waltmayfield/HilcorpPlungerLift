@@ -148,7 +148,7 @@ DataFileNames = [homeDirectory + r'DataByAPI/*.csv']
 raw_dataset = tf.data.Dataset.list_files(DataFileNames)
 
 ######## The take(5) is only for test purposes #######
-allWellDs = raw_dataset.map(process_path).take(5)
+allWellDs = raw_dataset.map(process_path)
 
 ######Remove all files currently in the TF Record Directory
 TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
