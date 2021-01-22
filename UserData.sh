@@ -11,8 +11,12 @@ python2.7 gpumon.py
 
 #Not sure if these will be accessable to ec2-user if made by root
 mkdir /home/ubuntu/EBSPlungerFiles
+mkdir /home/ubuntu/EBSPlungerFiles/Models
+mkdir /home/ubuntu/EBSPlungerFiles/TFRecordFiles
+mkdir /home/ubuntu/EBSPlungerFiles/RecommenedSettings
 cd /home/ubuntu/EBSPlungerFiles
 git clone https://github.com/waltmayfield/HilcorpPlungerLift
+
 cd ../
 
 docker create --gpus all -it --name testContainer --mount type=bind,source=/home/ubuntu/EBSPlungerFiles,target=/EBSPlungerFiles tensorflow/tensorflow:latest-gpu
