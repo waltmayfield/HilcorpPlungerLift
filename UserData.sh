@@ -5,9 +5,10 @@ usermod -a -G docker ec2-user
 chkconfig docker on
 yum install -y git
 
-#This is ment to enable GPU monitoring
-pip2.7 install nvidia-ml-py boto3
-python2.7 gpumon.py
+### This is ment to enable GPU monitoring
+pip install pynvml
+### You need to edit gpumon.py to have the correct region before running the file
+# python /home/ubuntu/tools/GPUCloudWatchMonitor/gpumon.py &
 
 #Not sure if these will be accessable to ec2-user if made by root
 mkdir /home/ubuntu/EBSPlungerFiles
@@ -16,7 +17,6 @@ mkdir /home/ubuntu/EBSPlungerFiles/TFRecordFiles
 mkdir /home/ubuntu/EBSPlungerFiles/RecommenedSettings
 cd /home/ubuntu/EBSPlungerFiles
 git clone https://github.com/waltmayfield/HilcorpPlungerLift
-
 cd ../
 
 docker create --gpus all -it --name testContainer --mount type=bind,source=/home/ubuntu/EBSPlungerFiles,target=/EBSPlungerFiles tensorflow/tensorflow:latest-gpu
