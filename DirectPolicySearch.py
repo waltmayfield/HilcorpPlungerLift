@@ -43,7 +43,7 @@ print(f'Output Settings Path: {outputPath}')
 
 ######Remove all files currently in the TF Record Directory
 TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
-print(f'TF Record Files: {[f for f in TFRecordDirectory]}')
+print(f'TF Record Files: {[f for f in os.listdir(TFRecordDirectory)]}')
 
 # #Pull up to date Model
 # os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/Models/ ~/EBSPlungerFiles/Models/')
@@ -57,7 +57,7 @@ print(f'TF Record Files: {[f for f in TFRecordDirectory]}')
 #my_strategy = tf.distribute.MirroredStrategy()
 
 model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
-print('Model Summary')
+# print('Model Summary')
 # print(model.summary())# tf.keras.utils.plot_model(model,show_shapes=True)
 
 s3_client = boto3.client('s3')
