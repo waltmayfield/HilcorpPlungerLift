@@ -2,7 +2,7 @@
   "Comment": "The step function prepairs data from S3 and run a policy search",
   "StartAt": "Start Data Prep Instance",
   "Version": "1.0",
-  "TimeoutSeconds": 10800,
+  "TimeoutSeconds": 36000,
   "States": {
     "Start Data Prep Instance": {
       "Type": "Task",
@@ -17,7 +17,7 @@
     },
     "Wait X Seconds": {
       "Type": "Wait",
-      "SecondsPath": "$.wait_time",
+      "Seconds": 5,
       "Next": "Get Instance Status"
     },
     "Get Instance Status": {
@@ -29,29 +29,18 @@
         ]
       },
       "Next": "Instance Start Complete?",
-      "InputPath": "$.guid",
-      "ResultPath": "$.status",
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "IntervalSeconds": 1,
-          "MaxAttempts": 3,
-          "BackoffRate": 2
-        }
-      ]
+      "ResultPath": "$.results"
     },
     "Instance Start Complete?": {
       "Type": "Choice",
       "Choices": [
         {
-          "Variable": "$.status",
+          "Variable": "$.results.InitilizingComplete",
           "StringEquals": "ok",
           "Next": "Run Data Prep Bash Commands"
         },
         {
-          "Variable": "$.status",
+          "Variable": "$.results.InitilizingComplete",
           "StringEquals": "initializing",
           "Next": "Wait X Seconds"
         }
@@ -65,16 +54,18 @@
         "FunctionName": "hilcorp-lower48-plunger-send-bash-scripts-to-EC2",
         "Payload": {
           "commands": [
-            "##### First Pull Git Repository #####",
+            "cd /home/ec2-user/",
+            "echo \"##### First Pull Git Repository #####\"",
             "cd $(pwd)/EBSPlungerFiles/HilcorpPlungerLift",
-            "git pull origin main",
+            "sudo git pull origin main",
             "cd ../../",
-            "##### Sync S3 Bucket with local EBS #####",
-            "#aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/DataByAPI/ $(pwd)/EBSPlungerFiles/DataByAPI/",
-            "##### Run the data prep function #####",
+            "echo \"##### Sync S3 Bucket with local EBS #####\"",
+            "aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/DataByAPI/ $(pwd)/EBSPlungerFiles/DataByAPI/",
+            "echo \"##### Run the data prep function #####\"",
             "docker container start testContainer",
-            "#docker exec testContainer python EBSPlungerFiles/HilcorpPlungerLift/PrepTFRecord.py",
-            "docker container stop testContainer"
+            "docker exec testContainer python EBSPlungerFiles/HilcorpPlungerLift/PrepTFRecord.py",
+            "docker container stop testContainer",
+            "echo \"##### Finished Data Prep. Will Now Stop EC2 #####\""
           ],
           "InstanceIds": [
             "i-005ec5286b50e7307"
@@ -108,7 +99,7 @@
     },
     "Wait X Seconds GPU": {
       "Type": "Wait",
-      "SecondsPath": "$.wait_time",
+      "Seconds": 5,
       "Next": "Get GPU Instance Status"
     },
     "Get GPU Instance Status": {
@@ -120,29 +111,18 @@
         ]
       },
       "Next": "GPU Instance Start Complete?",
-      "InputPath": "$.guid",
-      "ResultPath": "$.status",
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "IntervalSeconds": 1,
-          "MaxAttempts": 3,
-          "BackoffRate": 2
-        }
-      ]
+      "ResultPath": "$.status"
     },
     "GPU Instance Start Complete?": {
       "Type": "Choice",
       "Choices": [
         {
-          "Variable": "$.status",
+          "Variable": "$.status.InitilizingComplete",
           "StringEquals": "ok",
           "Next": "Run Direct Policy Search Bash Commands"
         },
         {
-          "Variable": "$.status",
+          "Variable": "$.status.InitilizingComplete",
           "StringEquals": "initializing",
           "Next": "Wait X Seconds GPU"
         }
@@ -156,14 +136,24 @@
         "FunctionName": "hilcorp-lower48-plunger-send-bash-scripts-to-EC2",
         "Payload": {
           "commands": [
-            "##### First Pull Git Repository #####",
+            "cd /home/ubuntu/",
+            "echo \"##### Enable GPU Monitoring In Background, Namespace: DeepLearningTrain #####\"",
+            "#python /home/ubuntu/tools/GPUCloudWatchMonitor/gpumon.py &",
+            "echo \"##### First Pull Git Repository #####\"",
             "cd $(pwd)/EBSPlungerFiles/HilcorpPlungerLift",
-            "git pull origin main",
+            "sudo git pull origin main",
             "cd ../../",
-            "##### Run the policy search function #####",
+            "echo \"##### Sync Model Files #####\"",
+            "aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/Models/ ~/EBSPlungerFiles/Models/",
+            "echo \"##### Delete Historic Data Files #####\"",
+            "rm -rf ~/EBSPlungerFiles/TFRecordFiles/*",
+            "echo \"##### Download most recent data file #####\"",
+            "aws s3 cp s3://hilcorp-l48operations-plunger-lift-main/\"$(aws s3 ls s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ --recursive | sort | tail -n 1 | awk '{print $4}')\" ~/EBSPlungerFiles/TFRecordFiles/",
+            "echo \"##### Run the policy search function #####\"",
             "docker container start testContainer",
-            "#docker exec testContainer python EBSPlungerFiles/HilcorpPlungerLift/DirectPolicySearch.py",
-            "docker container stop testContainer"
+            "docker exec testContainer python EBSPlungerFiles/HilcorpPlungerLift/DirectPolicySearch.py",
+            "docker container stop testContainer",
+            "echo \"##### Finished Policy Search. Will Now Stop EC2 #####\""
           ],
           "InstanceIds": [
             "i-08b67cde7a8a25c70"
