@@ -43,8 +43,7 @@ print(f'Output Settings Path: {outputPath}')
 
 ######Remove all files currently in the TF Record Directory
 TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
-# for f in os.listdir(TFRecordDirectory):
-#     os.remove(os.path.join(TFRecordDirectory, f))
+print(f'TF Record Files: {[f for f in TFRecordDirectory]}')
 
 # #Pull up to date Model
 # os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/Models/ ~/EBSPlungerFiles/Models/')
