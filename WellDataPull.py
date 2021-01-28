@@ -25,6 +25,7 @@ os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\con
 sProfile = 'my-sso-profile-production' #Production version
 main_bucket_name = 'hilcorp-l48operations-plunger-lift-main' #Production version
 bucket_name = 'hilcorp-l48operations-plunger-lift-temp' #Production version
+sTempFileLoc = r'./tempDf.csv'
 
 print(os.system(f'aws sso login --profile {sProfile}'))
 session = boto3.Session(profile_name=sProfile)#.client('sts').get_caller_identity()
@@ -162,9 +163,10 @@ for UWI in tqdm.tqdm(seriesUWIs):
     if tempDf.shape[0] < 1:
         continue#This is in case there is no data for a well
 
-    tempDf.to_csv(r'./tempDf.csv', index = False)
+    tempDf.to_csv(sTempFileLoc, index = False)
 
-    s3_client.upload_file(r'./tempDf.csv',bucket_name,prefix + '{}.csv'.format(UWI))
+    s3_client.upload_file(sTempFileLoc,bucket_name,prefix + '{}.csv'.format(UWI))
 
     # print(UWI)
     # break
+os.remove(sTempFileLoc)
