@@ -25,6 +25,7 @@ os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\con
 sProfile = 'my-sso-profile-production' #Production version
 main_bucket_name = 'hilcorp-l48operations-plunger-lift-main' #Production version
 bucket_name = 'hilcorp-l48operations-plunger-lift-temp' #Production version
+
 sTempFileLoc = r'./tempDf.csv'
 
 print(os.system(f'aws sso login --profile {sProfile}'))
@@ -84,10 +85,11 @@ seriesUWIs = loadSQL(sql).UWI
 
 # print('After: {}'.format(seriesUWIs.shape))
 
-dateToday = date.today()# + timedelta(days=1)
+#Don't pull wells from today to avoid incomplete cycles
+dateToday = date.today() + timedelta(days=-1)
 sEndDate = str(dateToday.year)+ "-" + str(dateToday.month) + "-" + str(dateToday.day)
 
-print(sEndDate)
+print(f'Last Date To Pull Data From: {sEndDate}')
 # seriesUWIs = ['0506705009']
 
 for UWI in tqdm.tqdm(seriesUWIs):
