@@ -15,6 +15,7 @@ mkdir /home/ubuntu/EBSPlungerFiles
 mkdir /home/ubuntu/EBSPlungerFiles/Models
 mkdir /home/ubuntu/EBSPlungerFiles/TFRecordFiles
 mkdir /home/ubuntu/EBSPlungerFiles/RecommenedSettings
+mkdir /home/ubuntu/EBSPlungerFiles/LossCurves
 
 # Clone git repository
 cd /home/ubuntu/EBSPlungerFiles
