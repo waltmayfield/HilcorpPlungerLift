@@ -117,18 +117,22 @@ def _float_feature(value):
     """Returns a float_list from a float / double."""
     return tf.train.Feature(float_list=tf.train.FloatList(value=[value]))
 
-def convert_ds_to_TFRecord(ds, num_elements, name, directory):
+def convert_ds_to_TFRecord(ds, name, directory):
 #     num_elements = ds.reduce(np.int64(0), lambda x, _: x + 1).numpy()
-    filename = os.path.join(directory, f'{name}-{num_elements}-Records.tfrecords')
-    print(f'Writing {filename}')
+    # filename = os.path.join(directory, f'{name}-{num_elements}-Records.tfrecords')
+    tempFileName = os.path.join(directory, r'temp.tfrecords')
+    #print(f'Writing {filename}')
     with tf.io.TFRecordWriter(filename) as writer: 
+        num_elements = 0
         for X, Y, path in tqdm.tqdm(ds):
+            if X.shape[0] < 10: continue# Don't write stequences with less than ten time steps
+            num_elements += 1# Add another element to the count
+            
             UWI = path.numpy()[-14:-4]
             num_time_steps = X.shape[0]
             # Serialize the tensors
             X_raw = X.numpy().tostring()
             Y_raw = Y.numpy().tostring()
-
             example = tf.train.Example(features=tf.train.Features(feature={
                     'UWI': _bytes_feature(UWI),
                     'X_raw': _bytes_feature(X_raw),
@@ -137,12 +141,15 @@ def convert_ds_to_TFRecord(ds, num_elements, name, directory):
                     }))
 
             writer.write(example.SerializeToString())
+            print(f'Wrote example # {num_elements}')
+        filename = os.path.join(directory, f'{name}-{num_elements}-Records.tfrecords')
+        os.rename(tempFileName,filename)
     return filename
 
 
-lFileNames = os.listdir(homeDirectory+r'DataByAPI/')
-num_examples = len(lFileNames)
-print(f'{num_examples} wells to write to file')
+# lFileNames = os.listdir(homeDirectory+r'DataByAPI/')
+# num_examples = len(lFileNames)
+# print(f'{num_examples} wells to write to file')
 
 DataFileNames = [homeDirectory + r'DataByAPI/*.csv']
 raw_dataset = tf.data.Dataset.list_files(DataFileNames)
@@ -156,7 +163,7 @@ for f in os.listdir(TFRecordDirectory):
     os.remove(os.path.join(TFRecordDirectory, f))
 
 #Add the new .tfrecord file to that directory
-outputFileName = convert_ds_to_TFRecord(allWellDs,num_examples,f"{datetime.today().strftime('%Y-%m-%d')}_DatasetOneExamplePerWellWithUWI",TFRecordDirectory)
+outputFileName = convert_ds_to_TFRecord(allWellDs,f"{datetime.today().strftime('%Y-%m-%d')}_DatasetOneExamplePerWellWithUWI",TFRecordDirectory)
 
 # !aws s3 cp /home/ec2-user/SageMaker/TFRecordFiles/DatasetOneExamplePerWellWithUWI-5138-Records.tfrecords s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ 
 S3outputKey = outputFileName[len(homeDirectory):]
