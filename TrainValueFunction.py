@@ -8,7 +8,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.layers import LeakyReLU
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.optimizers import Adam
-import boto3
+import boto3; import s3fs
 
 import FunctionsTF as F
 import Metrics as M
@@ -66,8 +66,8 @@ if not os.path.isfile(historyPath):
 #Download the current history path
 #dfHistory = pd.read_csv(historyPath)
 
-# strategy = tf.distribute.MirroredStrategy()
-# with strategy.scope():
+# strategy = tf.distribute.MirroredStrategy() #This creates a distributed training strategy
+# with strategy.scope(): #Models defined withing strategy.scope() are distributed amoung GPUs
 model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
 print('########## Model Summary #############')
 print(model.summary())# tf.keras.utils.plot_model(model,show_shapes=True)
@@ -78,7 +78,7 @@ latest_file = max(list_of_files, key=os.path.getctime) #This gets the most recen
 lTFRecordFiles = [latest_file]
 print(f'Most Recent TFRecord File: {lTFRecordFiles}')
 
-def count_data_items(filenames):
+def count_data_items(filenames): #This exists incase I want to use multiple .TFRecord files for training
     'Counts the records in each file name'
     n = [int(re.compile(r"-([0-9]*)-Records\.").search(filename).group(1)) for filename in filenames]
 #     print(n)
