@@ -43,9 +43,10 @@ def csv_to_tensor(file_path):
 
     print(f'################### outTensor {outTensor.shape} {outTensor}')
 
-    #Use KNN to impute missing data
-    imputer = KNNImputer(n_neighbors=2)
-    outTensor = tf.constant(imputer.fit_transform(outTensor))
+    if outTensor.shape[0]:
+        #Use KNN to impute missing data
+        imputer = KNNImputer(n_neighbors=2)
+        outTensor = tf.constant(imputer.fit_transform(outTensor))
     
     # #Replace missing values with imputed values
     # outTensor = tfp.sts.MaskedTimeSeries(
