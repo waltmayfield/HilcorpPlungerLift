@@ -28,8 +28,9 @@ aws s3 cp s3://hilcorp-l48operations-plunger-lift-main/"$(aws s3 ls s3://hilcorp
 docker create --gpus all -it --name tfContainer --mount type=bind,source=/home/ubuntu/EBSPlungerFiles,target=/EBSPlungerFiles tensorflow/tensorflow:latest-gpu
 #docker create --gpus all -it --name tfContainer --mount type=bind,source=C:\Users\wmayfield\Documents\HilcorpPlungerLift,target=/EBSPlungerFiles tensorflow/tensorflow:latest-gpu
 
-docker container start tfContainer
+docker container start tfContainer 
 
+docker exec tfContainer pip install -U scikit-learn
 docker exec tfContainer pip install boto3
 docker exec tfContainer pip install pandas
 docker exec tfContainer pip install tqdm

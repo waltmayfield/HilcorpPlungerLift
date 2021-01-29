@@ -35,8 +35,8 @@ def csv_to_tensor(file_path):
     #Remove the header. The last line will be empty b/c the previous ended with the new line character. Convert to tensor
     colSplit = colSplit[1:-1,4:].to_tensor()#This removes the column header and the empty last row
 
-    # #Replace empty strings with -1
-    # colSplit = tf.where(tf.equal(colSplit, b''), b'-1', colSplit)
+    #Replace empty strings with -1
+    colSplit = tf.where(tf.equal(colSplit, b''), b'NaN', colSplit)
     
     #Convert from string to float32
     outTensor = tf.strings.to_number(colSplit, out_type = tf.dtypes.float32, name = 'f32TensorCsv')
@@ -99,7 +99,6 @@ def process_path(file_path):
                  axis = 1,
                 #  name = r'Y_'+str(file_path)
                  )
-
 
     X = replaceNanOrInf(X)
     Y = replaceNanOrInf(Y)
