@@ -24,21 +24,33 @@ num_parallel_calls = 8
 buffer_size = 8
 ######################################################################
 
-homeDirectory = f'/AttachedVol/EBSPlungerFiles/'
+homeDirectory = r'/EBSPlungerFiles/'
 
-model_name = r'2020-12-16_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
+model_name = r'2021-01-29_469472-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
 model_save_location = homeDirectory + r'Models/' + model_name
-output_model_save_location = homeDirectory + r'Models/' + r'20201216_460k_Param_LSTM_Skip_resBlock.h5'
+#output_model_save_location = homeDirectory + r'Models/' + r'20201216_460k_Param_LSTM_Skip_resBlock.h5'
+
+BestValLossModelName = model_name[:-3] + '_bestValLoss' + model_name[-3:]
+sBestValLossModelLoc = homeDirectory + r'Models/' + BestValLossModelName
+
+bucket_name = 'hilcorp-l48operations-plunger-lift-main'
+
+
+S3ModelKey  = f"/Models/{model_name}"
+S3BestValLossModelKey = f"/Models/{sBestValLossModelName}"
 
 # historyPath = homeDirectory + r'LossCurves/' + r'20201216History.csv'
 historyPath = f"s3://{bucket_name}/LossCurves/{model_name[:10]}-RecommendedSettings.csv"
 
-bucket_name = 'hilcorp-l48operations-plunger-lift-main'
+
+
+s3_client = boto3.client('s3')
 
 ######Remove all files currently in the TF Record Directory
 TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
 for f in os.listdir(TFRecordDirectory):
     os.remove(os.path.join(TFRecordDirectory, f))
+
 
 #Pull up to date Models
 os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/Models/ ~/EBSPlungerFiles/Models/')
@@ -53,7 +65,7 @@ if not os.path.isfile(historyPath):
     pd.DataFrame(columns = ['loss', 'MCF_metric', 'plunger_speed_metric', 'val_loss', 'val_MCF_metric', 'val_plunger_speed_metric']).to_csv(historyPath, index = False)
 
 #Download the current history path
-dfHistory = pd.read_csv(historyPath)
+#dfHistory = pd.read_csv(historyPath)
 
 model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
 print('########## Model Summary #############')
@@ -77,7 +89,7 @@ numTrainWells = int(np.floor(num_examples*(1.-validation_split)))
 numValidWells = num_examples - numTrainWells
 print(f"Number of training wells: {numTrainWells}, Validation wells: {numValidWells} of total wells {num_examples}")
 
-############# This Makes the data set ######
+############# This Makes the data set ###########
 raw_dataset = tf.data.TFRecordDataset(lTFRecordFiles)
 # allWellDs = allWellDs.map(lambda x, y: (x[:100,:],y[:100,:]))#This is just for testing purposes to trim X for shorter computation
 
@@ -109,18 +121,27 @@ for x in tqdm.tqdm(validDs.take(20)): pass #This is to clock data set speed
 class EpochLogger(tf.keras.callbacks.Callback):
     def __init__(self,historyPath):
         self.historyPath = historyPath
-        self.historyDf = dfHistory
+        self.historyDf = pd.read_csv(historyPath)
     def on_epoch_end(self,epoch,logs=None):#This saves the loss data
+      #I have to save the model here to use the s3 client to upload
+      model.save(model_save_location)
+      s3_client.upload_file(model_save_location,bucket_name,S3ModelKey)
+
+      current_val_loss = logs.get("val_loss")
+      if self.historyDf.shape[0] > 0 and current_val_loss < pd.read_csv(self.historyPath).val_loss.min():
+
+        print(f'New best val_loss score {current_val_loss}. Saving Model to {sBestValLossModelLoc}')
+        model.save(sBestValLossModelLoc)
+        s3_client.upload_file(sBestValLossModelLoc,bucket_name,S3BestValLossModelKey)
         lossDf = pd.DataFrame(logs, index = [0]) #Turns logs into dataframe
         self.historyDf.append(lossDf)#Append the new row
         self.historyDf.to_csv(self.historyPath) #Replace the current loss curve file
 
-
-model_checkpoint = ModelCheckpoint(output_model_save_location, 
-                                   monitor = 'loss', 
-                                   save_best_only=False, 
-                                   save_weights_only = False,
-                                   verbose=1)
+# model_checkpoint = ModelCheckpoint(model_save_location, 
+#                                    monitor = 'loss', 
+#                                    save_best_only=False, 
+#                                    save_weights_only = False,
+#                                    verbose=1)
 
 terminateOnNaN = keras.callbacks.TerminateOnNaN()
 log_results = EpochLogger(historyPath)
@@ -137,7 +158,7 @@ model.fit(x = trainDs.repeat(epochs),
           use_multiprocessing=False,
           callbacks = [
             log_results,
-            model_checkpoint,
+            # model_checkpoint,
             terminateOnNaN
             ]
           )
