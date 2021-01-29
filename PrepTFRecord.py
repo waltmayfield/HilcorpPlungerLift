@@ -41,6 +41,8 @@ def csv_to_tensor(file_path):
     #Convert from string to float32
     outTensor = tf.strings.to_number(colSplit, out_type = tf.dtypes.float32, name = 'f32TensorCsv')
 
+    print(f'################### outTensor {outTensor.shape} {outTensor}')
+
     #Use KNN to impute missing data
     imputer = KNNImputer(n_neighbors=2)
     outTensor = tf.constant(imputer.fit_transform(outTensor))
