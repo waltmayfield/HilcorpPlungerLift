@@ -62,7 +62,7 @@ for f in os.listdir(TFRecordDirectory):
 #This creates a new hitory df if one does not already exist
 if not os.path.isfile(historyPathLoc):
     print('Creating new history DF at {}'.format(time.localtime()))
-    pd.DataFrame(columns = ['loss', 'MCF_metric', 'plunger_speed_metric', 'val_loss', 'val_MCF_metric', 'val_plunger_speed_metric']).to_csv(historyPath, index = False)
+    pd.DataFrame(columns = ['loss', 'MCF_metric', 'plunger_speed_metric', 'val_loss', 'val_MCF_metric', 'val_plunger_speed_metric']).to_csv(historyPathLoc, index = False)
 
 #Download the current history path
 #dfHistory = pd.read_csv(historyPath)
@@ -134,9 +134,11 @@ class EpochLogger(tf.keras.callbacks.Callback):
         print(f'New best val_loss score {current_val_loss}. Saving Model to {sBestValLossModelLoc}')
         model.save(sBestValLossModelLoc)
         s3_client.upload_file(sBestValLossModelLoc,bucket_name,S3BestValLossModelKey)
+
         lossDf = pd.DataFrame(logs, index = [0]) #Turns logs into dataframe
-        self.historyDf.append(lossDf)#Append the new row
-        s3_client.upload_file(historyPathLoc,bucket_name,historyKeyS3)
+        # self.historyDf.append(lossDf)#Append the new row
+        lossDf.to_csv(self.historyPath, mode = 'a', header = False) #Append row to csv file
+        s3_client.upload_file(self.historyPath,bucket_name,historyKeyS3)
         # self.historyDf.to_csv(self.historyPath) #Replace the current loss curve file
 
 # model_checkpoint = ModelCheckpoint(model_save_location, 
@@ -146,7 +148,7 @@ class EpochLogger(tf.keras.callbacks.Callback):
 #                                    verbose=1)
 
 terminateOnNaN = keras.callbacks.TerminateOnNaN()
-log_results = EpochLogger(historyPath)
+log_results = EpochLogger(historyPathLoc)
 
 optimizer = Adam(lr = 1e-3)
 model.compile(loss=M.custom_loss, optimizer=optimizer, metrics = [M.MCF_metric, M.plunger_speed_metric])
