@@ -75,7 +75,7 @@ print('########## Model Summary #############')
 print(model.summary())# tf.keras.utils.plot_model(model,show_shapes=True)
 
 ## This gets the most recent data file
-list_of_files = glob.glob(homeDirectory + f'/TFRecordFiles/*') # * means all if need specific format then *.csv
+list_of_files = glob.glob(homeDirectory + f'TFRecordFiles/*') # * means all if need specific format then *.csv
 latest_file = max(list_of_files, key=os.path.getctime) #This gets the most recently uploaded TF Record File
 lTFRecordFiles = [latest_file]
 print(f'Most Recent TFRecord File: {lTFRecordFiles}')
