@@ -26,9 +26,8 @@ print(f'TF version: {tf.__version__}')
 lGpus = tf.config.experimental.list_physical_devices('GPU')
 print(f'GPUs: {lGpus}')
 
-
-bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 homeDirectory = r'/EBSPlungerFiles/'
+bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 model_name = r'2020-12-16_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
 
 model_save_location = homeDirectory + r'Models/' + model_name

@@ -19,6 +19,10 @@ cd /home/ubuntu/EBSPlungerFiles
 git clone https://github.com/waltmayfield/HilcorpPlungerLift
 cd ../
 
+#Download most recent data file
+aws s3 cp s3://hilcorp-l48operations-plunger-lift-main/"$(aws s3 ls s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ --recursive | sort | tail -n 1 | awk '{print $4}')" /home/ubuntu/EBSPlungerFiles/TFRecordFiles/ --no-progress
+
+
 docker create --gpus all -it --name tfContainer --mount type=bind,source=/home/ubuntu/EBSPlungerFiles,target=/EBSPlungerFiles tensorflow/tensorflow:latest-gpu
 #docker create --gpus all -it --name tfContainer --mount type=bind,source=C:\Users\wmayfield\Documents\HilcorpPlungerLift,target=/EBSPlungerFiles tensorflow/tensorflow:latest-gpu
 

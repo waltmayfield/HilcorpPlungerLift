@@ -31,7 +31,7 @@ model_save_location = homeDirectory + r'Models/' + model_name
 #output_model_save_location = homeDirectory + r'Models/' + r'20201216_460k_Param_LSTM_Skip_resBlock.h5'
 
 sBestValLossModelName = model_name[:-3] + '_bestValLoss' + model_name[-3:]
-sBestValLossModelLoc = homeDirectory + r'Models/' + BestValLossModelName
+sBestValLossModelLoc = homeDirectory + r'Models/' + sBestValLossModelName
 
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 
