@@ -137,7 +137,7 @@ def convert_ds_to_TFRecord(ds, name, directory):
     # filename = os.path.join(directory, f'{name}-{num_elements}-Records.tfrecords')
     tempFileName = os.path.join(directory, r'temp.tfrecords')
     #print(f'Writing {filename}')
-    with tf.io.TFRecordWriter(filename) as writer: 
+    with tf.io.TFRecordWriter(tempFileName) as writer: 
         num_elements = 0
         for X, Y, path in tqdm.tqdm(ds):
             if X.shape[0] < 10: continue# Don't write stequences with less than ten time steps
