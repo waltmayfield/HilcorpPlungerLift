@@ -21,7 +21,7 @@ numGPUs = len(lGpus)
 ######################### Training Parameters ########################
 training_epochs = 100
 validation_split = 0.1
-batch_size = numGPUs*8
+batch_size = numGPUs*6
 num_parallel_calls = 8
 buffer_size = 8
 ######################################################################
