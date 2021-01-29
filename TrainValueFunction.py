@@ -8,6 +8,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.layers import LeakyReLU
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.optimizers import Adam
+import boto3
 
 import FunctionsTF as F
 import Metrics as M
