@@ -31,15 +31,15 @@ s3_client = session.client('s3')
 obj = s3_client.get_object(Bucket=bucket_name, Key=sHistoryKey)
 histDf =pd.read_csv(io.BytesIO(obj['Body'].read()), encoding='utf8').reset_index().drop(['index'], axis = 1)
 
-#print the last few rows of the loss curve csv file
-print(histDf.tail(10))
-
 #Calculated the time since last update
 d = datetime.datetime.now()
 timezone = pytz.timezone("America/Chicago")
 d_aware = timezone.localize(d)
 dt = (d_aware - obj['LastModified']).total_seconds()
 print('Last update: {:.2f} minutes ago'.format(dt/60))
+
+#print the last few rows of the loss curve csv file
+print(histDf.tail(10))
 
 #Create the figure
 fig, (ax_mse, ax_loss, ax_acc) = plt.subplots(1, 3, figsize=(25,5))

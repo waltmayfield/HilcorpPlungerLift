@@ -141,7 +141,8 @@ class EpochLogger(tf.keras.callbacks.Callback):
 
       #If the val_loss is the lowest yet, save the model
       current_val_loss = logs.get("val_loss")
-      if self.historyDf.shape[0] > 0 and current_val_loss < pd.read_csv(self.historyPath).val_loss.min():
+      self.historyDf = pd.read_csv(historyPath)
+      if self.historyDf.shape[0] > 0 and current_val_loss < self.historyDf.val_loss.min():
         print(f'New best val_loss score {current_val_loss}. Saving Model to {sBestValLossModelLoc}')
         model.save(sBestValLossModelLoc)
         s3_client.upload_file(sBestValLossModelLoc,bucket_name,S3BestValLossModelKey)
