@@ -30,7 +30,7 @@ model_name = r'2021-01-29_469472-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Le
 model_save_location = homeDirectory + r'Models/' + model_name
 #output_model_save_location = homeDirectory + r'Models/' + r'20201216_460k_Param_LSTM_Skip_resBlock.h5'
 
-BestValLossModelName = model_name[:-3] + '_bestValLoss' + model_name[-3:]
+sBestValLossModelName = model_name[:-3] + '_bestValLoss' + model_name[-3:]
 sBestValLossModelLoc = homeDirectory + r'Models/' + BestValLossModelName
 
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
@@ -42,15 +42,12 @@ S3BestValLossModelKey = f"/Models/{sBestValLossModelName}"
 # historyPath = homeDirectory + r'LossCurves/' + r'20201216History.csv'
 historyPath = f"s3://{bucket_name}/LossCurves/{model_name[:10]}-RecommendedSettings.csv"
 
-
-
 s3_client = boto3.client('s3')
 
 ######Remove all files currently in the TF Record Directory
 TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
 for f in os.listdir(TFRecordDirectory):
     os.remove(os.path.join(TFRecordDirectory, f))
-
 
 #Pull up to date Models
 os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/Models/ ~/EBSPlungerFiles/Models/')
