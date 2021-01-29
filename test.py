@@ -1,57 +1,68 @@
 
-import os
-import boto3
-import pandas as pd; import numpy as np
-from sklearn.impute import KNNImputer
+import re; import sys; import importlib; import tqdm; import os; import time; import glob
+import pathlib
+import numpy as np; import pandas as pd
 import tensorflow as tf
-from datetime import datetime
-import tqdm
+from tensorflow import keras
+from tensorflow.keras.models import load_model
+from tensorflow.keras.layers import LeakyReLU
+from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.optimizers import Adam
+import boto3; import s3fs
 
-pd.set_option("display.precision", 1)
-pd.set_option('display.max_rows', 500)
-pd.set_option('display.max_columns', 500)
-pd.set_option('display.width', 1000)
+# import FunctionsTF as F
+# import Metrics as M
 
-#This is a new path which may be more efficient for training
-def replaceNanOrInf(X):
-    bMask = tf.math.logical_or(tf.math.is_nan(X),tf.math.is_inf(X))
-    return tf.where(bMask,-1.,X)
+#Define the data source
+TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
 
-#This is a new path which may be more efficient for training
-def csv_to_tensor(file_path):
-    #First read the file into a string
-    sCsv = tf.io.read_file(file_path)#, [tf.constant('-1')]*1)#.numpy().decode('utf-8')
-    #Then split the string into rows
-    rowSplit = tf.strings.split(sCsv, sep=b'\r\n', maxsplit=-1, name='SplitLines')
-    rowSplit = tf.strings.split(sCsv, sep=b'\n', maxsplit=-1, name='SplitLines')
-    #The split that into rows and columns
-    colSplit = tf.strings.split(rowSplit, sep=b',', maxsplit=-1, name='SplitLines')
-    #Remove the header. The last line will be empty b/c the previous ended with the new line character. Convert to tensor
-    colSplit = colSplit[1:-1,4:].to_tensor()#This removes the column header and the empty last row
+# ## This gets the most recent data file
+# list_of_files = glob.glob(homeDirectory + f'TFRecordFiles/*') # * means all if need specific format then *.csv
+# latest_file = max(list_of_files, key=os.path.getctime) #This gets the most recently uploaded TF Record File
+lTFRecordFiles = [latest_file]
+print(f'Most Recent TFRecord File: {lTFRecordFiles}')
 
-    #Replace empty strings with -1
-    colSplit = tf.where(tf.equal(colSplit, b''), b'NaN', colSplit)
-    
-    #Convert from string to float32
-    outTensor = tf.strings.to_number(colSplit, out_type = tf.dtypes.float32, name = 'f32TensorCsv')
+def count_data_items(filenames): #This exists incase I want to use multiple .TFRecord files for training
+    'Counts the records in each file name'
+    n = [int(re.compile(r"-([0-9]*)-Records\.").search(filename).group(1)) for filename in filenames]
+#     print(n)
+    return np.sum(n)
 
-    # print(f'################### outTensor {outTensor.shape} {outTensor}')
+num_examples = count_data_items(lTFRecordFiles)
+numTrainWells = int(np.floor(num_examples*(1.-validation_split)))
+numValidWells = num_examples - numTrainWells
+print(f"Number of training wells: {numTrainWells}, Validation wells: {numValidWells} of total wells {num_examples}")
 
-    if outTensor.shape[0]:
-        #Use KNN to impute missing data
-        imputer = KNNImputer(n_neighbors=2)
-        outTensor = tf.constant(imputer.fit_transform(outTensor))
-    
-    # #Replace missing values with imputed values
-    # outTensor = tfp.sts.MaskedTimeSeries(
-    #     time_series=outTensor,
-    #     is_missing=replaceNanOrInf(outTensor))
+########################### This Makes the data set #############################
+raw_dataset = tf.data.TFRecordDataset(lTFRecordFiles)
+allDs = raw_dataset.map(F.parse_raw_examples_UWI, num_parallel_calls=num_parallel_calls)
 
-    return outTensor
+for X,Y,UWI in allDs:
+	print(X)
+	break
+# allWellDs = allWellDs.map(lambda x, y: (x[:100,:],y[:100,:]))#This is just for testing purposes to trim X for shorter computation
 
-fname = r"C:\Users\wmayfield\Downloads\3003921558(2).csv"
-print(pd.read_csv(fname).iloc[:,:10].head())
+# trainDs = raw_dataset.skip(numValidWells)
+# trainDs = trainDs.map(F.parse_raw_examples_UWI, num_parallel_calls=num_parallel_calls)
+# trainDs = trainDs.map(lambda x, y, UWIs: (x,y))#This is to remove the UWI which is not useful in trianing
+# trainDs = trainDs.map(lambda x, y: (tf.reverse(x, axis = [0]),tf.reverse(y, axis = [0])))#This is to have leading instead of trailing 0s. Reverse the time direction
+# trainDs = trainDs.padded_batch(batch_size, padded_shapes=([None,79],[None,2]))# Add the 0s behind the example
+# trainDs = trainDs.map(lambda x, y: (tf.reverse(x, axis = [1]),tf.reverse(y, axis = [1]))) #Reverse the time to the correct direction
+# trainDs = trainDs.prefetch(buffer_size)
+# # trainDs = trainDs.cache(r'./')
 
-print(csv_to_tensor(fname)[:5,:10])
+# validDs = raw_dataset.take(numValidWells)
+# validDs = validDs.map(F.parse_raw_examples_UWI, num_parallel_calls=num_parallel_calls)
+# validDs = validDs.map(lambda x, y, UWIs: (x,y))#This is to remove the UWI which is not useful in trianing
+# validDs = validDs.map(lambda x, y: (tf.reverse(x, axis = [0]),tf.reverse(y, axis = [0])))
+# validDs = validDs.padded_batch(batch_size, padded_shapes=([None,79],[None,2]))
+# validDs = validDs.map(lambda x, y: (tf.reverse(x, axis = [1]),tf.reverse(y, axis = [1])))
+# validDs = validDs.prefetch(buffer_size)
 
-print("Done")
+
+# print('Clocking training DS Speed')
+# for x in tqdm.tqdm(trainDs.take(20)): pass #This is to clock data set speed
+# print('Clocking validation DS Speed')
+# for x in tqdm.tqdm(validDs.take(20)): pass #This is to clock data set speed
+
+
