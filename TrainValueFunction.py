@@ -156,7 +156,7 @@ model.compile(loss=M.custom_loss, optimizer=optimizer, metrics = [M.MCF_metric, 
 
 steps_per_epoch = int(np.ceil(numTrainWells/batch_size))
 
-model.fit(x = trainDs.repeat(epochs),
+model.fit(x = trainDs.repeat(training_epochs),
           validation_data=validDs,
           epochs = training_epochs,
           steps_per_epoch = steps_per_epoch,
