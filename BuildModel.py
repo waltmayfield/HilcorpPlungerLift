@@ -21,7 +21,6 @@ print(os.system(f'aws sso login --profile {sProfile}'))
 session = boto3.Session(profile_name=sProfile)
 ################################################################################
 
-
 # homeDirectory = f'~/EBSPlungerFiles/'
 homeDirectory = tempfile.gettempdir()
 

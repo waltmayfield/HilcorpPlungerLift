@@ -41,17 +41,12 @@ def csv_to_tensor(file_path):
     #Convert from string to float32
     outTensor = tf.strings.to_number(colSplit, out_type = tf.dtypes.float32, name = 'f32TensorCsv')
 
-    print(f'################### outTensor {outTensor.shape} {outTensor}')
+    # print(f'################### outTensor {outTensor.shape} {outTensor}')
 
     if outTensor.shape[0]:
         #Use KNN to impute missing data
         imputer = KNNImputer(n_neighbors=2)
         outTensor = tf.constant(imputer.fit_transform(outTensor))
-    
-    # #Replace missing values with imputed values
-    # outTensor = tfp.sts.MaskedTimeSeries(
-    #     time_series=outTensor,
-    #     is_missing=replaceNanOrInf(outTensor))
 
     return outTensor
 
@@ -100,8 +95,8 @@ def process_path(file_path):
                 #  name = r'Y_'+str(file_path)
                  )
 
-    X = replaceNanOrInf(X)
-    Y = replaceNanOrInf(Y)
+    # X = replaceNanOrInf(X)
+    # Y = replaceNanOrInf(Y)
 
     X = tf.clip_by_value(X,-1e2,1e6)
     Y = tf.clip_by_value(Y,0.,2000.)
@@ -139,7 +134,7 @@ def convert_ds_to_TFRecord(ds, name, directory):
     with tf.io.TFRecordWriter(tempFileName) as writer: 
         num_elements = 0
         for X, Y, path in tqdm.tqdm(ds):
-            if X.shape[0] < 10: continue# Don't write stequences with less than ten time steps
+            if X.shape[0] < 1000: continue# Don't write stequences with too few time steps
             num_elements += 1# Add another element to the count
             
             UWI = path.numpy()[-14:-4]
