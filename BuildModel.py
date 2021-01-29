@@ -6,6 +6,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, GRU, LSTM, Dense, TimeDistributed, Activation, BatchNormalization, Concatenate, LeakyReLU
 from tensorflow.keras import regularizers
 import boto3
+import pydot, graphviz
 
 import FunctionsTF as F
 

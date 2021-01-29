@@ -10,7 +10,7 @@ pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
-sHistoryKey = r'LossCurves/2021-01-29-RecommendedSettings.csv'
+sHistoryKey = r'LossCurves/2021-01-29-LossCurves.csv'
 
 ##################### Authentication #########################################
 ##This is where the session will look for the profile name
