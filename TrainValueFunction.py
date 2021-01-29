@@ -19,7 +19,7 @@ print(f'GPUs: {lGpus}')
 numGPUs = len(lGpus)
 
 ######################### Training Parameters ########################
-training_epochs = 100
+training_epochs = 1000
 validation_split = 0.1
 batch_size = numGPUs*4
 num_parallel_calls = 8
@@ -42,8 +42,8 @@ S3ModelKey  = f"Models/{model_name}"
 S3BestValLossModelKey = f"Models/{sBestValLossModelName}"
 
 # historyPath = homeDirectory + r'LossCurves/' + r'20201216History.csv'
-historyPathLoc = f"{homeDirectory}/LossCurves/{model_name[:10]}-RecommendedSettings.csv"
-historyKeyS3 = f"LossCurves/{model_name[:10]}-RecommendedSettings.csv"
+historyPathLoc = f"{homeDirectory}/LossCurves/{model_name[:10]}-LossCurves.csv"
+historyKeyS3 = f"LossCurves/{model_name[:10]}-LossCurves.csv"
 
 s3_client = boto3.client('s3')
 
@@ -60,10 +60,15 @@ TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
 # sS3URILatestDataKey = f"s3://{bucket_name}/{sLatestDataKey}"
 # os.system(f'aws s3 cp {sS3URILatestDataKey} ~/EBSPlungerFiles/TFRecordFiles/')
 
-#This creates a new hitory df if one does not already exist
-if not os.path.isfile(historyPathLoc):
+#Download the existing loss curves .csv file
+try:
+  s3_client.download_file(bucket_name, historyKeyS3, historyPathLoc)
+except:#If there is no existing historyDf in s3, make a local one for upload later
     print('Creating new history DF at {}'.format(time.localtime()))
     pd.DataFrame(columns = ['loss', 'MCF_metric', 'plunger_speed_metric', 'val_loss', 'val_MCF_metric', 'val_plunger_speed_metric']).to_csv(historyPathLoc, index = False)
+#This creates a new hitory df if one does not already exist
+# if not os.path.isfile(historyPathLoc):
+
 
 #Download the current history path
 #dfHistory = pd.read_csv(historyPath)
@@ -165,5 +170,5 @@ model.fit(x = trainDs.repeat(training_epochs),
             # model_checkpoint,
             terminateOnNaN
             ],
-            verbose=2
+            verbose=2 #verbose = 2 is better for logging
           )
