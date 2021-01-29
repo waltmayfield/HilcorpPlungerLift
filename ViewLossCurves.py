@@ -17,7 +17,7 @@ sHistoryKey = r'LossCurves/2021-01-29-LossCurves.csv'
 ##This is where the session will look for the profile name
 os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
 sProfile = 'my-sso-profile-production' #Production version
-#print(os.system(f'aws sso login --profile {sProfile}')) ##Comment this out after the first run
+# print(os.system(f'aws sso login --profile {sProfile}')) ##Comment this out after the first run. Run again if get SSO error.
 session = boto3.Session(profile_name=sProfile)
 ################################################################################
 
@@ -29,7 +29,7 @@ s3_client = session.client('s3')
 
 #Donload the object using boto3
 obj = s3_client.get_object(Bucket=bucket_name, Key=sHistoryKey)
-histDf =pd.read_csv(io.BytesIO(obj['Body'].read()), encoding='utf8').reset_index()
+histDf =pd.read_csv(io.BytesIO(obj['Body'].read()), encoding='utf8').reset_index().drop(['index'], axis = 1)
 
 #print the last few rows of the loss curve csv file
 print(histDf.tail(10))
