@@ -5,10 +5,11 @@ import boto3
 import matplotlib.pyplot as plt, pandas as pd
 import fsspec, s3fs
 
-pd.set_option("display.precision", 0)
+# pd.set_option("display.precision", 0)
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
+pd.options.display.float_format = '{:,.0f}'.format
 
 sHistoryKey = r'LossCurves/2021-01-29-LossCurves.csv'
 
@@ -20,24 +21,27 @@ sProfile = 'my-sso-profile-production' #Production version
 session = boto3.Session(profile_name=sProfile)
 ################################################################################
 
+
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 sHistoryURI = f's3://hilcorp-l48operations-plunger-lift-main/LossCurves/{sHistoryKey}'
 
 s3_client = session.client('s3')
 
+#Donload the object using boto3
 obj = s3_client.get_object(Bucket=bucket_name, Key=sHistoryKey)
 histDf =pd.read_csv(io.BytesIO(obj['Body'].read()), encoding='utf8').reset_index()
 
+#print the last few rows of the loss curve csv file
+print(histDf.tail(10))
+
+#Calculated the time since last update
 d = datetime.datetime.now()
 timezone = pytz.timezone("America/Chicago")
 d_aware = timezone.localize(d)
-
-print(histDf.tail())
-
 dt = (d_aware - obj['LastModified']).total_seconds()
 print('Last update: {:.2f} minutes ago'.format(dt/60))
 
-#Buffered data was truncated after reaching the output size limit.
+#Create the figure
 fig, (ax_mse, ax_loss, ax_acc) = plt.subplots(1, 3, figsize=(25,5))
 
 ax_mse.plot(histDf.index, histDf['val_loss'], label="Validation loss mse")
