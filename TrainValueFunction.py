@@ -16,11 +16,12 @@ import Metrics as M
 print(f'Tensorflow version: {tf.__version__}')
 lGpus = tf.config.experimental.list_physical_devices('GPU')
 print(f'GPUs: {lGpus}')
+numGPUs = len(lGpus)
 
 ######################### Training Parameters ########################
 training_epochs = 100
 validation_split = 0.1
-batch_size = 2
+batch_size = 2*numGPUs
 num_parallel_calls = 8
 buffer_size = 8
 ######################################################################
@@ -50,12 +51,12 @@ TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
 for f in os.listdir(TFRecordDirectory):
     os.remove(os.path.join(TFRecordDirectory, f))
 
-#Pull up to date Models
-os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/Models/ ~/EBSPlungerFiles/Models/')
-#Pull up to date Data
-sLatestDataKey=os.popen("aws s3 ls s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ --recursive | sort | tail -n 1 | awk '{print $4}'").read()[:-1]#The -1 removes the new line character
-sS3URILatestDataKey = f"s3://{bucket_name}/{sLatestDataKey}"
-os.system(f'aws s3 cp {sS3URILatestDataKey} ~/EBSPlungerFiles/TFRecordFiles/')
+# #Pull up to date Models
+# os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/Models/ ~/EBSPlungerFiles/Models/')
+# #Pull up to date Data
+# sLatestDataKey=os.popen("aws s3 ls s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ --recursive | sort | tail -n 1 | awk '{print $4}'").read()[:-1]#The -1 removes the new line character
+# sS3URILatestDataKey = f"s3://{bucket_name}/{sLatestDataKey}"
+# os.system(f'aws s3 cp {sS3URILatestDataKey} ~/EBSPlungerFiles/TFRecordFiles/')
 
 #This creates a new hitory df if one does not already exist
 if not os.path.isfile(historyPath):
@@ -65,6 +66,8 @@ if not os.path.isfile(historyPath):
 #Download the current history path
 #dfHistory = pd.read_csv(historyPath)
 
+# strategy = tf.distribute.MirroredStrategy()
+# with strategy.scope():
 model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
 print('########## Model Summary #############')
 print(model.summary())# tf.keras.utils.plot_model(model,show_shapes=True)
@@ -74,7 +77,6 @@ list_of_files = glob.glob(homeDirectory + f'/TFRecordFiles/*') # * means all if 
 latest_file = max(list_of_files, key=os.path.getctime) #This gets the most recently uploaded TF Record File
 lTFRecordFiles = [latest_file]
 print(f'Most Recent TFRecord File: {lTFRecordFiles}')
-
 
 def count_data_items(filenames):
     'Counts the records in each file name'
@@ -87,7 +89,7 @@ numTrainWells = int(np.floor(num_examples*(1.-validation_split)))
 numValidWells = num_examples - numTrainWells
 print(f"Number of training wells: {numTrainWells}, Validation wells: {numValidWells} of total wells {num_examples}")
 
-############# This Makes the data set ###########
+########################### This Makes the data set #############################
 raw_dataset = tf.data.TFRecordDataset(lTFRecordFiles)
 # allWellDs = allWellDs.map(lambda x, y: (x[:100,:],y[:100,:]))#This is just for testing purposes to trim X for shorter computation
 

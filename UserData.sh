@@ -15,13 +15,14 @@ mkdir /home/ubuntu/EBSPlungerFiles
 mkdir /home/ubuntu/EBSPlungerFiles/Models
 mkdir /home/ubuntu/EBSPlungerFiles/TFRecordFiles
 mkdir /home/ubuntu/EBSPlungerFiles/RecommenedSettings
+
+# Clone git repository
 cd /home/ubuntu/EBSPlungerFiles
 git clone https://github.com/waltmayfield/HilcorpPlungerLift
 cd ../
 
 #Download most recent data file
-aws s3 cp s3://hilcorp-l48operations-plunger-lift-main/"$(aws s3 ls s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ --recursive | sort | tail -n 1 | awk '{print $4}')" /home/ubuntu/EBSPlungerFiles/TFRecordFiles/ --no-progress
-
+aws s3 cp s3://hilcorp-l48operations-plunger-lift-main/"$(aws s3 ls s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ --recursive | sort | tail -n 1 | awk '{print $4}')" /home/ubuntu/EBSPlungerFiles/TFRecordFiles/
 
 docker create --gpus all -it --name tfContainer --mount type=bind,source=/home/ubuntu/EBSPlungerFiles,target=/EBSPlungerFiles tensorflow/tensorflow:latest-gpu
 #docker create --gpus all -it --name tfContainer --mount type=bind,source=C:\Users\wmayfield\Documents\HilcorpPlungerLift,target=/EBSPlungerFiles tensorflow/tensorflow:latest-gpu
@@ -31,6 +32,10 @@ docker container start tfContainer
 docker exec tfContainer pip install boto3
 docker exec tfContainer pip install pandas
 docker exec tfContainer pip install tqdm
+#These are for pandas to interact with s3
+docker exec tfContainer pip install fsspec
+docker exec tfContainer pip install awscli
+docker exec tfContainer pip install s3fs
 
 docker container stop tfContainer
 
