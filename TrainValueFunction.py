@@ -21,7 +21,7 @@ numGPUs = len(lGpus)
 ######################### Training Parameters ########################
 training_epochs = 100
 validation_split = 0.1
-batch_size = 2*numGPUs
+batch_size = numGPUs*2
 num_parallel_calls = 8
 buffer_size = 8
 ######################################################################
@@ -47,10 +47,11 @@ historyKeyS3 = f"LossCurves/{model_name[:10]}-RecommendedSettings.csv"
 
 s3_client = boto3.client('s3')
 
-######Remove all files currently in the TF Record Directory
+#Define the data source
 TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
-for f in os.listdir(TFRecordDirectory):
-    os.remove(os.path.join(TFRecordDirectory, f))
+
+# for f in os.listdir(TFRecordDirectory):
+#     os.remove(os.path.join(TFRecordDirectory, f))
 
 # #Pull up to date Models
 # os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/Models/ ~/EBSPlungerFiles/Models/')
