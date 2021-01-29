@@ -101,8 +101,8 @@ def process_path(file_path):
     X = tf.clip_by_value(X,-1e2,1e6)
     Y = tf.clip_by_value(Y,0.,2000.)
 
-    tf.debugging.check_numerics(X, 'X error, file: {} '.format(file_path))
-    tf.debugging.check_numerics(Y, 'Y error, file: {} '.format(file_path))
+    tf.debugging.check_numerics(X, f'X error, file: {file_path} ')
+    tf.debugging.check_numerics(Y, f'Y error, file: {file_path} ')
 
     return X, Y, file_path
 

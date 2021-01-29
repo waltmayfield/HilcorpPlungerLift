@@ -38,8 +38,8 @@ sBestValLossModelLoc = homeDirectory + r'Models/' + sBestValLossModelName
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 
 
-S3ModelKey  = f"/Models/{model_name}"
-S3BestValLossModelKey = f"/Models/{sBestValLossModelName}"
+S3ModelKey  = f"Models/{model_name}"
+S3BestValLossModelKey = f"Models/{sBestValLossModelName}"
 
 # historyPath = homeDirectory + r'LossCurves/' + r'20201216History.csv'
 historyPathLoc = f"{homeDirectory}/LossCurves/{model_name[:10]}-RecommendedSettings.csv"
@@ -129,18 +129,17 @@ class EpochLogger(tf.keras.callbacks.Callback):
       model.save(model_save_location)
       s3_client.upload_file(model_save_location,bucket_name,S3ModelKey)
 
+      #Save the loss curves
+      lossDf = pd.DataFrame(logs, index = [0]) #Turns logs into dataframe
+      lossDf.to_csv(self.historyPath, mode = 'a', header = False) #Append row to csv file
+      s3_client.upload_file(self.historyPath,bucket_name,historyKeyS3)
+
+      #If the val_loss is the lowest yet, save the model
       current_val_loss = logs.get("val_loss")
       if self.historyDf.shape[0] > 0 and current_val_loss < pd.read_csv(self.historyPath).val_loss.min():
-
         print(f'New best val_loss score {current_val_loss}. Saving Model to {sBestValLossModelLoc}')
         model.save(sBestValLossModelLoc)
         s3_client.upload_file(sBestValLossModelLoc,bucket_name,S3BestValLossModelKey)
-
-        lossDf = pd.DataFrame(logs, index = [0]) #Turns logs into dataframe
-        # self.historyDf.append(lossDf)#Append the new row
-        lossDf.to_csv(self.historyPath, mode = 'a', header = False) #Append row to csv file
-        s3_client.upload_file(self.historyPath,bucket_name,historyKeyS3)
-        # self.historyDf.to_csv(self.historyPath) #Replace the current loss curve file
 
 # model_checkpoint = ModelCheckpoint(model_save_location, 
 #                                    monitor = 'loss', 
@@ -165,5 +164,6 @@ model.fit(x = trainDs.repeat(training_epochs),
             log_results,
             # model_checkpoint,
             terminateOnNaN
-            ]
+            ],
+            verbose=2
           )
