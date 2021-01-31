@@ -141,7 +141,7 @@ class EpochLogger(tf.keras.callbacks.Callback):
 
       #If the val_loss is the lowest yet, save the model
       current_val_loss = logs.get("val_loss")
-      self.historyDf = pd.read_csv(historyPath)
+      self.historyDf = pd.read_csv(self.historyPath)
       if self.historyDf.shape[0] > 0 and current_val_loss < self.historyDf.val_loss.min():
         print(f'New best val_loss score {current_val_loss}. Saving Model to {sBestValLossModelLoc}')
         model.save(sBestValLossModelLoc)
