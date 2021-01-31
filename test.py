@@ -12,6 +12,7 @@ pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
+
 #This is a new path which may be more efficient for training
 def replaceNanOrInf(X):
     bMask = tf.math.logical_or(tf.math.is_nan(X),tf.math.is_inf(X))
