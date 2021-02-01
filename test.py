@@ -1,32 +1,34 @@
 
-import PrepTFRecord as PR
-import pandas as pd; import numpy as np
+# import PrepTFRecord as PR
+# import pandas as pd; import numpy as np
 
-fname = r"C:\Users\wmayfield\Downloads\3003921558(2).csv"
+# fname = r"C:\Users\wmayfield\Downloads\3003921558(2).csv"
 
-print(pd.read_csv(fname).iloc[:,:10].head())
+# print(pd.read_csv(fname).iloc[:,:10].head())
 
-print(f'csv shape: {pd.read_csv(fname).iloc[:,4:].shape}')
+# print(f'csv shape: {pd.read_csv(fname).iloc[:,4:].shape}')
 
-# X = PR.csv_to_tensor(fname)
-# print(f'X shape: {X.shape}')
-# print(X[:,:5])
-# print(f'All values finite?:{np.isfinite(X).min()==1} ')
+# # X = PR.csv_to_tensor(fname)
+# # print(f'X shape: {X.shape}')
+# # print(X[:,:5])
+# # print(f'All values finite?:{np.isfinite(X).min()==1} ')
 
-X, Y, path = PR.process_path(fname)
-if min(np.isfinite(X).min(),np.isfinite(Y).min()) == 0:
-	print(f'Found NaN or Inf with file : {path}')	
-else:
-	print('No Nan or Inf')
+# X, Y, path = PR.process_path(fname)
+# if min(np.isfinite(X).min(),np.isfinite(Y).min()) == 0:
+# 	print(f'Found NaN or Inf with file : {path}')	
+# else:
+# 	print('No Nan or Inf')
 
-print(f'X error location: {np.isfinite(X).argmax()}')
+# print(f'X error location: {np.isfinite(X).argmax()}')
 
-print(X[0,:])
-print(X.shape)
-print(Y.shape)
-print(path)
-print("Done")
+# print(X[0,:])
+# print(X.shape)
+# print(Y.shape)
+# print(path)
+# print("Done")
 
+
+print((None or 1))
 
 # import tensorflow as tf
 
