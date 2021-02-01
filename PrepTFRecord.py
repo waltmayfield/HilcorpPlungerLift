@@ -57,9 +57,12 @@ def csv_to_tensor(file_path):
     #Apply the empty column bmask to outTensor and replace with default value
     outTensor = tf.where(emptyColBMask,100.,outTensor)
     #Use KNN to impute missing data
-    print('Imputting Missing Data')
-    imputer = KNNImputer(n_neighbors=2)
-    outTensor = tf.constant(imputer.fit_transform(outTensor))
+
+    if outTensor.shape[0]:
+        print('Imputting Missing Data')
+        imputer = KNNImputer(n_neighbors=2)
+        outTensor = tf.constant(imputer.fit_transform(outTensor))
+
     # except: pass
 
     return outTensor
