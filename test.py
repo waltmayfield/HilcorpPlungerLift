@@ -20,6 +20,9 @@ if min(np.isfinite(X).min(),np.isfinite(Y).min()) == 0:
 print(f'X error location: {np.isfinite(X).argmax()}')
 
 print(X[0,:])
+print(X.shape)
+print(Y.shape)
+print(path)
 print("Done")
 
 
