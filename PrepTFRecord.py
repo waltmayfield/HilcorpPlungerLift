@@ -161,22 +161,24 @@ def convert_ds_to_TFRecord(ds, name, directory):
 # num_examples = len(lFileNames)
 # print(f'{num_examples} wells to write to file')
 
-DataFileNames = [homeDirectory + r'DataByAPI/*.csv']
-raw_dataset = tf.data.Dataset.list_files(DataFileNames)
 
-######## The take(5) is only for test purposes #######
-allWellDs = raw_dataset.map(process_path)
+if __name__ == "__main__":
+    DataFileNames = [homeDirectory + r'DataByAPI/*.csv']
+    raw_dataset = tf.data.Dataset.list_files(DataFileNames)
 
-######Remove all files currently in the TF Record Directory
-TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
-for f in os.listdir(TFRecordDirectory):
-    os.remove(os.path.join(TFRecordDirectory, f))
+    ######## The take(5) is only for test purposes #######
+    allWellDs = raw_dataset.map(process_path)
 
-#Add the new .tfrecord file to that directory
-outputFileName = convert_ds_to_TFRecord(allWellDs,f"{datetime.today().strftime('%Y-%m-%d')}_DatasetOneExamplePerWellWithUWI",TFRecordDirectory)
+    ######Remove all files currently in the TF Record Directory
+    TFRecordDirectory = homeDirectory + f'TFRecordFiles/'
+    for f in os.listdir(TFRecordDirectory):
+        os.remove(os.path.join(TFRecordDirectory, f))
 
-# !aws s3 cp /home/ec2-user/SageMaker/TFRecordFiles/DatasetOneExamplePerWellWithUWI-5138-Records.tfrecords s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ 
-S3outputKey = outputFileName[len(homeDirectory):]
-print(f'S3outputKey: {S3outputKey}')
-s3_client = boto3.client('s3')
-s3_client.upload_file(outputFileName,bucket_name,S3outputKey)
+    #Add the new .tfrecord file to that directory
+    outputFileName = convert_ds_to_TFRecord(allWellDs,f"{datetime.today().strftime('%Y-%m-%d')}_DatasetOneExamplePerWellWithUWI",TFRecordDirectory)
+
+    # !aws s3 cp /home/ec2-user/SageMaker/TFRecordFiles/DatasetOneExamplePerWellWithUWI-5138-Records.tfrecords s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ 
+    S3outputKey = outputFileName[len(homeDirectory):]
+    print(f'S3outputKey: {S3outputKey}')
+    s3_client = boto3.client('s3')
+    s3_client.upload_file(outputFileName,bucket_name,S3outputKey)
