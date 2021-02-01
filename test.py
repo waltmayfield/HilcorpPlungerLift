@@ -38,7 +38,9 @@ fname = r"C:\Users\wmayfield\Downloads\3003921558(2).csv"
 # print("Done")
 
 
-DataFileNames = [fname]
+# DataFileNames = [fname]
+DataFileNames = [r"C:\Users\wmayfield\Downloads\3003921558(2).csv", r"C:\Users\wmayfield\Downloads\3004534464.csv"]
+
 raw_dataset = tf.data.Dataset.list_files(DataFileNames)
 
 ######## The take(5) is only for test purposes #######

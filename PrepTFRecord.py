@@ -35,8 +35,10 @@ def csv_to_tensor(file_path):
     #Remove the header. The last line will be empty b/c the previous ended with the new line character. Convert to tensor
     colSplit = colSplit[1:-1,4:].to_tensor()#This removes the column header and the empty last row
 
+    # #Replace empty strings with NaN
+    # colSplit = tf.where(tf.equal(colSplit, b''), b'NaN', colSplit)
     #Replace empty strings with NaN
-    colSplit = tf.where(tf.equal(colSplit, b''), b'NaN', colSplit)
+    colSplit = tf.where(tf.equal(colSplit, b''), b'-1', colSplit)
     
     #Convert from string to float32
     outTensor = tf.strings.to_number(colSplit, out_type = tf.dtypes.float32, name = 'f32TensorCsv')
@@ -164,7 +166,6 @@ def convert_ds_to_TFRecord(ds, name, directory):
                 print(f'Found NaN or Inf with file : {path}')
                 print(f'X: {X[0,:]}')
                 print(f'Y: {Y[0,:]}')
-                
                 continue
 
             print(f'Writing example # {num_elements}, shape: {X.shape}')
