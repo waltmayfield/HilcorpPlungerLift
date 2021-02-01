@@ -16,6 +16,8 @@ print(f'csv shape: {pd.read_csv(fname).iloc[:,4:].shape}')
 X, Y, path = PR.process_path(fname)
 if min(np.isfinite(X).min(),np.isfinite(Y).min()) == 0:
 	print(f'Found NaN or Inf with file : {path}')	
+else:
+	print('No Nan or Inf')
 
 print(f'X error location: {np.isfinite(X).argmax()}')
 
