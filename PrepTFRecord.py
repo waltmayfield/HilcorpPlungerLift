@@ -101,7 +101,7 @@ def process_path(file_path):
     X = tf.clip_by_value(X,-1e2,1e6)
     Y = tf.clip_by_value(Y,0.,2000.)
 
-    tf.debugging.check_numerics(X, f'X error, file: {file_path} ')
+    tf.debugging.check_numerics(X, f'X error, X shape: {X.shape}, file: {file_path} ')
     tf.debugging.check_numerics(Y, f'Y error, file: {file_path} ')
 
     return X, Y, file_path
@@ -135,6 +135,7 @@ def convert_ds_to_TFRecord(ds, name, directory):
         num_elements = 0
         for X, Y, path in tqdm.tqdm(ds):
             if X.shape[0] < 1000: continue# Don't write stequences with too few time steps
+            print(f'Writing example # {num_elements}, shape: {X.shape}')
             num_elements += 1# Add another element to the count
             
             UWI = path.numpy()[-14:-4]
@@ -150,7 +151,7 @@ def convert_ds_to_TFRecord(ds, name, directory):
                     }))
 
             writer.write(example.SerializeToString())
-            print(f'Wrote example # {num_elements}, shape: {X.shape}')
+            
         filename = os.path.join(directory, f'{name}-{num_elements}-Records.tfrecords')
         os.rename(tempFileName,filename)
     return filename
