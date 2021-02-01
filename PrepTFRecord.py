@@ -58,10 +58,10 @@ def csv_to_tensor(file_path):
     outTensor = tf.where(emptyColBMask,100.,outTensor)
     #Use KNN to impute missing data
 
-    if outTensor.shape[0]:
-        print('Imputting Missing Data')
-        imputer = KNNImputer(n_neighbors=2)
-        outTensor = tf.constant(imputer.fit_transform(outTensor))
+    # # if outTensor.shape[0]:
+    # print('Imputting Missing Data')
+    # imputer = KNNImputer(n_neighbors=2)
+    # outTensor = tf.constant(imputer.fit_transform(outTensor))
 
     # except: pass
 
@@ -153,6 +153,11 @@ def convert_ds_to_TFRecord(ds, name, directory):
     with tf.io.TFRecordWriter(tempFileName) as writer: 
         num_elements = 0
         for X, Y, path in tqdm.tqdm(ds):
+            print('Imputting Missing Data')
+            imputer = KNNImputer(n_neighbors=2)
+            X = tf.constant(imputer.fit_transform(X))
+            Y = tf.constant(imputer.fit_transform(Y))
+
             if X.shape[0] < 1000: continue# Don't write stequences with too few time steps
             if min(np.isfinite(X).min(),np.isfinite(Y).min()) == 0:
                 print(f'Found NaN or Inf with file : {path}')
