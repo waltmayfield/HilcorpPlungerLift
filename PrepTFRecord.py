@@ -41,9 +41,7 @@ def csv_to_tensor(file_path):
     #Convert from string to float32
     outTensor = tf.strings.to_number(colSplit, out_type = tf.dtypes.float32, name = 'f32TensorCsv')
 
-    print(f'################### outTensor {outTensor.shape} {outTensor}')
-
-
+    # print(f'################### outTensor {outTensor.shape} {outTensor}')
 
     if outTensor.shape[0]: #Data imputation doesn't work if the input has no rows
         #Now count the non nan values by column. If a column has no non nan values then use a default value
