@@ -43,7 +43,7 @@ def csv_to_tensor(file_path):
 
     # print(f'################### outTensor {outTensor.shape} {outTensor}')
 
-    if outTensor.shape[0]: #Data imputation doesn't work if the input has no rows
+    try: #Data imputation doesn't work if the input has no rows
         #Now count the non nan values by column. If a column has no non nan values then use a default value
         countNan = tf.cast(tf.math.logical_not(tf.math.is_nan(outTensor)), tf.uint32)
         countNan = tf.math.reduce_sum(countNan, axis = 0)
@@ -62,6 +62,7 @@ def csv_to_tensor(file_path):
         print('Imputting Missing Data')
         imputer = KNNImputer(n_neighbors=2)
         outTensor = tf.constant(imputer.fit_transform(outTensor))
+    except: pass
 
     return outTensor
 
