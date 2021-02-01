@@ -43,22 +43,23 @@ def csv_to_tensor(file_path):
 
     print(f'################### outTensor {outTensor.shape} {outTensor}')
 
-    #Now count the non nan values by column. If a column has no non nan values then use a default value
-    countNan = tf.cast(tf.math.logical_not(tf.math.is_nan(outTensor)), tf.uint32)
-    countNan = tf.math.reduce_sum(countNan, axis = 0)
-    emptyColumns = tf.math.equal(countNan,0)
-    emptyColBMask = tf.repeat(tf.expand_dims(emptyColumns, axis = 0), repeats = [outTensor.shape[0]], axis = 0)
 
-    # print(f'emptyColBMask: {emptyColBMask.shape}')
 
-    #Apply the empty column bmask to outTensor and replace with default value
-    outTensor = tf.where(emptyColBMask,100.,outTensor)
+    if outTensor.shape[0]: #Data imputation doesn't work if the input has no rows
+        #Now count the non nan values by column. If a column has no non nan values then use a default value
+        countNan = tf.cast(tf.math.logical_not(tf.math.is_nan(outTensor)), tf.uint32)
+        countNan = tf.math.reduce_sum(countNan, axis = 0)
+        emptyColumns = tf.math.equal(countNan,0)
+        emptyColBMask = tf.repeat(tf.expand_dims(emptyColumns, axis = 0), repeats = [outTensor.shape[0]], axis = 0)
 
-    # print(f'countNan shape: {countNan.shape} {countNan}')
+        # print(f'emptyColBMask: {emptyColBMask.shape}')
 
-    # print(f'empthColumns shape: {emptyColumns.shape} {emptyColumns}')
+        # print(f'countNan shape: {countNan.shape} {countNan}')
 
-    if outTensor.shape[0]:
+        # print(f'empthColumns shape: {emptyColumns.shape} {emptyColumns}')
+
+        #Apply the empty column bmask to outTensor and replace with default value
+        outTensor = tf.where(emptyColBMask,100.,outTensor)
         #Use KNN to impute missing data
         print('Imputting Missing Data')
         imputer = KNNImputer(n_neighbors=2)
