@@ -41,10 +41,26 @@ def csv_to_tensor(file_path):
     #Convert from string to float32
     outTensor = tf.strings.to_number(colSplit, out_type = tf.dtypes.float32, name = 'f32TensorCsv')
 
-    # print(f'################### outTensor {outTensor.shape} {outTensor}')
+    print(f'################### outTensor {outTensor.shape} {outTensor}')
+
+    #Now count the non nan values by column. If a column has no non nan values then use a default value
+    countNan = tf.cast(tf.math.logical_not(tf.math.is_nan(outTensor)), tf.uint32)
+    countNan = tf.math.reduce_sum(countNan, axis = 0)
+    emptyColumns = tf.math.equal(countNan,0)
+    emptyColBMask = tf.repeat(tf.expand_dims(emptyColumns, axis = 0), repeats = [outTensor.shape[0]], axis = 0)
+
+    # print(f'emptyColBMask: {emptyColBMask.shape}')
+
+    #Apply the empty column bmask to outTensor and replace with default value
+    outTensor = tf.where(emptyColBMask,100.,outTensor)
+
+    # print(f'countNan shape: {countNan.shape} {countNan}')
+
+    # print(f'empthColumns shape: {emptyColumns.shape} {emptyColumns}')
 
     if outTensor.shape[0]:
         #Use KNN to impute missing data
+        print('Imputting Missing Data')
         imputer = KNNImputer(n_neighbors=2)
         outTensor = tf.constant(imputer.fit_transform(outTensor))
 
@@ -65,6 +81,8 @@ def process_path(file_path):
     CS_MINUS_LN_SI_loc = 75
     PERCENT_CL_END_FLOW_loc = 76
     inputTensor = csv_to_tensor(file_path)
+
+    print(f'Input Tensor shape: {inputTensor.shape}')
 
     inputTensor = tf.clip_by_value(inputTensor, -1e6, 1e6, name='ClippedInput')
 
