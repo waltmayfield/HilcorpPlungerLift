@@ -11,6 +11,9 @@ import tensorflow as tf
 from datetime import datetime
 import tqdm
 
+import os
+
+os.remove('/this/file/is/not/real.txt')
 
 # fname = r"C:\Users\wmayfield\Downloads\3003921558(2).csv")
 
@@ -38,7 +41,7 @@ import tqdm
 # print("Done")
 
 DataFileNames = [r"C:\Users\wmayfield\Downloads\3003921558(2).csv"]#, r"C:\Users\wmayfield\Downloads\3004534464.csv"]
-fname = DataFileNames[0]
+#fname = r"C:\Users\wmayfield\Downloads\3004534464.csv"#DataFileNames[0]
 
 print(pd.read_csv(fname).iloc[:,:10].head())
 print(pd.read_csv(fname).shape)

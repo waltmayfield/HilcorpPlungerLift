@@ -151,6 +151,9 @@ def convert_ds_to_TFRecord(ds, name, directory):
 #     num_elements = ds.reduce(np.int64(0), lambda x, _: x + 1).numpy()
     # filename = os.path.join(directory, f'{name}-{num_elements}-Records.tfrecords')
     tempFileName = os.path.join(directory, r'temp.tfrecords')
+    
+    if os.path.exists(tempFileName): os.remove(tempFileName)#If there already exists a file here, delete it
+
     #print(f'Writing {filename}')
     with tf.io.TFRecordWriter(tempFileName) as writer: 
         num_elements = 0
