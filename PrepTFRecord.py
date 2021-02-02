@@ -157,10 +157,10 @@ def convert_ds_to_TFRecord(ds, name, directory):
         for X, Y, path in tqdm.tqdm(ds):
             if X.shape[0] < 1000: continue# Don't write stequences with too few time steps
 
-            print('Imputting Missing Data')
-            imputer = KNNImputer(n_neighbors=2)
-            X = tf.constant(imputer.fit_transform(X))
-            Y = tf.constant(imputer.fit_transform(Y))
+            # print('Imputting Missing Data')
+            # imputer = KNNImputer(n_neighbors=2)
+            # X = tf.constant(imputer.fit_transform(X))
+            # Y = tf.constant(imputer.fit_transform(Y))
             
             if min(np.isfinite(X).min(),np.isfinite(Y).min()) == 0:
                 print(f'Found NaN or Inf with file : {path}')
