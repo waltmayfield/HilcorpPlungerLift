@@ -45,19 +45,20 @@ def csv_to_tensor(file_path):
 
     # print(f'################### outTensor {outTensor.shape} {outTensor}')
 
-    # try: #Data imputation doesn't work if the input has no rows
-    #Now count the non nan values by column. If a column has no non nan values then use a default value
-    countNan = tf.cast(tf.math.logical_not(tf.math.is_nan(outTensor)), tf.uint32)
-    countNan = tf.math.reduce_sum(countNan, axis = 0)
-    emptyColumns = tf.math.equal(countNan,0)
-    emptyColBMask = tf.repeat(tf.expand_dims(emptyColumns, axis = 0), repeats = [(outTensor.shape[0] or 1)], axis = 0)
+    # # try: #Data imputation doesn't work if the input has no rows
+    # #Now count the non nan values by column. If a column has no non nan values then use a default value
+    # countNan = tf.cast(tf.math.logical_not(tf.math.is_nan(outTensor)), tf.uint32)
+    # countNan = tf.math.reduce_sum(countNan, axis = 0)
+    # emptyColumns = tf.math.equal(countNan,0)
+    # emptyColBMask = tf.repeat(tf.expand_dims(emptyColumns, axis = 0), repeats = [(outTensor.shape[0] or 1)], axis = 0)
 
-    # print(f'emptyColBMask: {emptyColBMask.shape}')
-    # print(f'countNan shape: {countNan.shape} {countNan}')
-    # print(f'empthColumns shape: {emptyColumns.shape} {emptyColumns}')
+    # outTensor = tf.where(emptyColBMask,100.,outTensor)
+    # # print(f'emptyColBMask: {emptyColBMask.shape}')
+    # # print(f'countNan shape: {countNan.shape} {countNan}')
+    # # print(f'empthColumns shape: {emptyColumns.shape} {emptyColumns}')
 
     #Apply the empty column bmask to outTensor and replace with default value
-    outTensor = tf.where(emptyColBMask,100.,outTensor)
+    
     #Use KNN to impute missing data
 
     # # if outTensor.shape[0]:
@@ -84,8 +85,6 @@ def process_path(file_path):
     CS_MINUS_LN_SI_loc = 75
     PERCENT_CL_END_FLOW_loc = 76
     inputTensor = csv_to_tensor(file_path)
-
-    print(f'Input Tensor shape: {inputTensor.shape}')
 
     inputTensor = tf.clip_by_value(inputTensor, -1e6, 1e6, name='ClippedInput')
 
@@ -116,14 +115,15 @@ def process_path(file_path):
                 #  name = r'Y_'+str(file_path)
                  )
 
-    # X = replaceNanOrInf(X)
-    # Y = replaceNanOrInf(Y)
+
+    X = replaceNanOrInf(X)
+    Y = replaceNanOrInf(Y)
 
     X = tf.clip_by_value(X,-1e2,1e6)
     Y = tf.clip_by_value(Y,0.,2000.)
 
-    # tf.debugging.check_numerics(X, f'X error, X shape: {X.shape}, file: {file_path} ')
-    # tf.debugging.check_numerics(Y, f'Y error, file: {file_path} ')
+    tf.debugging.check_numerics(X, 'X error, file: {} '.format(file_path))
+    tf.debugging.check_numerics(Y, 'Y error, file: {} '.format(file_path))
 
     return X, Y, file_path
 

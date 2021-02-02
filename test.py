@@ -12,7 +12,7 @@ from datetime import datetime
 import tqdm
 
 
-fname = r"C:\Users\wmayfield\Downloads\3003921558(2).csv"
+# fname = r"C:\Users\wmayfield\Downloads\3003921558(2).csv")
 
 # print(pd.read_csv(fname).iloc[:,:10].head())
 
@@ -37,28 +37,35 @@ fname = r"C:\Users\wmayfield\Downloads\3003921558(2).csv"
 # print(path)
 # print("Done")
 
+DataFileNames = [r"C:\Users\wmayfield\Downloads\3003921558(2).csv"]#, r"C:\Users\wmayfield\Downloads\3004534464.csv"]
+fname = DataFileNames[0]
 
-# DataFileNames = [fname]
-DataFileNames = [r"C:\Users\wmayfield\Downloads\3003921558(2).csv", r"C:\Users\wmayfield\Downloads\3004534464.csv"]
+print(pd.read_csv(fname).iloc[:,:10].head())
+print(pd.read_csv(fname).shape)
 
-raw_dataset = tf.data.Dataset.list_files(DataFileNames)
+X, Y, path = PR.process_path(fname)
 
-######## The take(5) is only for test purposes #######
-allWellDs = raw_dataset.map(PR.process_path)
+print(f'X shape: {X.shape}')
+print(f'Y shape: {Y.shape}')
 
-# ######Remove all files currently in the TF Record Directory
-TFRecordDirectory = r'C:\Users\wmayfield\Downloads'
-# for f in os.listdir(TFRecordDirectory):
-#     os.remove(os.path.join(TFRecordDirectory, f))
+# raw_dataset = tf.data.Dataset.list_files(DataFileNames)
 
-#Add the new .tfrecord file to that directory
-outputFileName = PR.convert_ds_to_TFRecord(allWellDs,f"{datetime.today().strftime('%Y-%m-%d')}_DatasetOneExamplePerWellWithUWI",TFRecordDirectory)
+# ######## The take(5) is only for test purposes #######
+# allWellDs = raw_dataset.map(PR.process_path)
 
-# !aws s3 cp /home/ec2-user/SageMaker/TFRecordFiles/DatasetOneExamplePerWellWithUWI-5138-Records.tfrecords s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ 
-S3outputKey = outputFileName[len(homeDirectory):]
-print(f'S3outputKey: {S3outputKey}')
-s3_client = boto3.client('s3')
-s3_client.upload_file(outputFileName,bucket_name,S3outputKey)
+# # ######Remove all files currently in the TF Record Directory
+# TFRecordDirectory = r'C:\Users\wmayfield\Downloads'
+# # for f in os.listdir(TFRecordDirectory):
+# #     os.remove(os.path.join(TFRecordDirectory, f))
+
+# #Add the new .tfrecord file to that directory
+# outputFileName = PR.convert_ds_to_TFRecord(allWellDs,f"{datetime.today().strftime('%Y-%m-%d')}_DatasetOneExamplePerWellWithUWI",TFRecordDirectory)
+
+# # !aws s3 cp /home/ec2-user/SageMaker/TFRecordFiles/DatasetOneExamplePerWellWithUWI-5138-Records.tfrecords s3://hilcorp-l48operations-plunger-lift-main/TFRecordFiles/ 
+# S3outputKey = outputFileName[len(homeDirectory):]
+# print(f'S3outputKey: {S3outputKey}')
+# s3_client = boto3.client('s3')
+# s3_client.upload_file(outputFileName,bucket_name,S3outputKey)
 
 # print((None or 1))
 
