@@ -105,7 +105,7 @@ def loss_function(prediction, y):
 #print(gpu_info)
 
 dfSuggestions = pd.DataFrame()
-for j, (tX, ty, UWI) in tqdm.tqdm(enumerate(allWellDs.take(5)), total = int(np.ceil(num_examples/batch_size))):
+for j, (tX, ty, UWI) in tqdm.tqdm(enumerate(allWellDs), total = int(np.ceil(num_examples/batch_size))):
     # break
     # if j >10: break
     X = tX.numpy()
