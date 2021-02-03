@@ -13,7 +13,7 @@ print(f'Tensorflow version: {tf.__version__}')
 
 homeDirectory = f'EBSPlungerFiles/'
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
-prefix = 'DataByAPI/'
+# prefix = 'DataByAPI/'
 
 # #sync Data
 # os.system('aws s3 sync s3://hilcorp-l48operations-plunger-lift-main/DataByAPI/ ~/EBSPlungerFiles/DataByAPI/')
