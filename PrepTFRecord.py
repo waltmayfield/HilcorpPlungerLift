@@ -45,14 +45,14 @@ def csv_to_tensor(file_path):
 
     # print(f'################### outTensor {outTensor.shape} {outTensor}')
 
-    # try: #Data imputation doesn't work if the input has no rows
-    #Now count the non nan values by column. If a column has no non nan values then use a default value
-    countNan = tf.cast(tf.math.logical_not(tf.math.is_nan(outTensor)), tf.uint32)
-    countNan = tf.math.reduce_sum(countNan, axis = 0)
-    emptyColumns = tf.math.equal(countNan,0)
-    emptyColBMask = tf.repeat(tf.expand_dims(emptyColumns, axis = 0), repeats = [(outTensor.shape[0] or 1)], axis = 0)
+    # # try: #Data imputation doesn't work if the input has no rows
+    # #Now count the non nan values by column. If a column has no non nan values then use a default value
+    # countNan = tf.cast(tf.math.logical_not(tf.math.is_nan(outTensor)), tf.uint32)
+    # countNan = tf.math.reduce_sum(countNan, axis = 0)
+    # emptyColumns = tf.math.equal(countNan,0)
+    # emptyColBMask = tf.repeat(tf.expand_dims(emptyColumns, axis = 0), repeats = [(outTensor.shape[0] or 1)], axis = 0)
 
-    outTensor = tf.where(emptyColBMask,100.,outTensor)
+    # outTensor = tf.where(emptyColBMask,100.,outTensor)
     # print(f'emptyColBMask: {emptyColBMask.shape}')
     # print(f'countNan shape: {countNan.shape} {countNan}')
     # print(f'empthColumns shape: {emptyColumns.shape} {emptyColumns}')
