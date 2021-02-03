@@ -1,19 +1,67 @@
 
-import PrepTFRecord as PR
+# import PrepTFRecord as PR
+# # import pandas as pd; import numpy as np
+# # import tensorflow as tf
+
+# #import os
+# import boto3
 # import pandas as pd; import numpy as np
+# from sklearn.impute import KNNImputer
 # import tensorflow as tf
+# from datetime import datetime
+# import tqdm
 
-#import os
-import boto3
-import pandas as pd; import numpy as np
-from sklearn.impute import KNNImputer
-import tensorflow as tf
-from datetime import datetime
-import tqdm
+import numpy as np
 
-import os
 
-os.remove('/this/file/is/not/real.txt')
+X = np.array([[1.,2.,np.nan],[3.,5.,np.nan],[np.nan, 7., np.nan]])
+
+print(X)
+
+countNan = ~np.isnan(X)
+countNan = np.sum(countNan, axis = 0)
+emptyColumns = (countNan == 0)
+X = np.where(emptyColumns,100,X)
+
+# print(np.where(emptyColumns,-1,X))
+
+# docker run --rm -v U:\scikit-learn-layer:/foo lambci/lambda:build-python3.8 \
+# 	pip install scikit-learn -t python
+
+# docker run --rm -v $(pwd)/lambda-layer:/foo lambci/lambda:build-python3.8 \
+# 	pip3 install --ignore-installed --target=python scikit-learn
+
+# aws s3 cp scikit-learn.zip s3://hilcorp-l48operations-plunger-lift-main/lambdaDeploymentPackages/ --region us-west-2
+
+# aws lambda publish-layer-version \
+#     --layer-name scikit-learn-numpy \
+#     --description "Scikit-learn for Python 3.8" \
+#     --compatible-runtimes python3.7 python3.8 \
+#     --region us-west-2 \
+#     --content S3Bucket=hilcorp-l48operations-plunger-lift-main,S3Key=lambdaDeploymentPackages/scikit-learn.zip
+
+
+# docker run -it --rm -v $(pwd):/app onema/amazonlinux4lambda bash
+
+# docker run -it --rm -v $(pwd):/app lambci/lambda:build-python3.8 bash
+
+# cd /app
+# mkdir -p scikitlearn/python
+# cd scikitlearn/
+# pip3 install --ignore-installed --target=python scikit-learn
+# rm -rf python/numpy* python/scipy*
+# zip -r ../scikitlearn.zip .
+
+# zip -r scikit-learn.zip python
+
+# aws lambda publish-layer-version  \
+# 	--layer-name Python36-SciKitLearn  \
+# 	--description "Latest version of scikit learn for python 3.6"  \
+# 	--license-info "BSD"  \
+# 	--region us-west-2 \
+# 	--content S3Bucket=hilcorp-l48operations-plunger-lift-main,S3Key=lambdaDeploymentPackages/scikitlearn.zip  \
+# 	--compatible-runtimes python3.6
+
 
 # fname = r"C:\Users\wmayfield\Downloads\3003921558(2).csv")
 
@@ -40,16 +88,16 @@ os.remove('/this/file/is/not/real.txt')
 # print(path)
 # print("Done")
 
-DataFileNames = [r"C:\Users\wmayfield\Downloads\3003921558(2).csv"]#, r"C:\Users\wmayfield\Downloads\3004534464.csv"]
-#fname = r"C:\Users\wmayfield\Downloads\3004534464.csv"#DataFileNames[0]
+# DataFileNames = [r"C:\Users\wmayfield\Downloads\3003921558(2).csv"]#, r"C:\Users\wmayfield\Downloads\3004534464.csv"]
+# #fname = r"C:\Users\wmayfield\Downloads\3004534464.csv"#DataFileNames[0]
 
-print(pd.read_csv(fname).iloc[:,:10].head())
-print(pd.read_csv(fname).shape)
+# print(pd.read_csv(fname).iloc[:,:10].head())
+# print(pd.read_csv(fname).shape)
 
-X, Y, path = PR.process_path(fname)
+# X, Y, path = PR.process_path(fname)
 
-print(f'X shape: {X.shape}')
-print(f'Y shape: {Y.shape}')
+# print(f'X shape: {X.shape}')
+# print(f'Y shape: {Y.shape}')
 
 # raw_dataset = tf.data.Dataset.list_files(DataFileNames)
 

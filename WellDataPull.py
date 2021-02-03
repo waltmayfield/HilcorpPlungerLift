@@ -28,7 +28,8 @@ bucket_name = 'hilcorp-l48operations-plunger-lift-temp' #Production version
 
 sTempFileLoc = r'./tempDf.csv'
 
-print(os.system(f'aws sso login --profile {sProfile}'))
+# print(os.system(f'aws sso login --profile {sProfile}'))
+
 session = boto3.Session(profile_name=sProfile)#.client('sts').get_caller_identity()
 
 main_prefix = 'DataByAPI/'  #This is for the main data set
