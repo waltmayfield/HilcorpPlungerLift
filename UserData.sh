@@ -14,7 +14,7 @@ python /home/ubuntu/tools/GPUCloudWatchMonitor/gpumon.py &
 mkdir /home/ubuntu/EBSPlungerFiles
 mkdir /home/ubuntu/EBSPlungerFiles/Models
 mkdir /home/ubuntu/EBSPlungerFiles/TFRecordFiles
-mkdir /home/ubuntu/EBSPlungerFiles/RecommenedSettings
+mkdir /home/ubuntu/EBSPlungerFiles/RecommendedSettings
 mkdir /home/ubuntu/EBSPlungerFiles/LossCurves
 
 # Clone git repository
