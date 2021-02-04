@@ -28,7 +28,7 @@ bucket_name = 'hilcorp-l48operations-plunger-lift-temp' #Production version
 
 sTempFileLoc = r'./tempDf.csv'
 
-# print(os.system(f'aws sso login --profile {sProfile}'))
+print(os.system(f'aws sso login --profile {sProfile}'))
 
 session = boto3.Session(profile_name=sProfile)#.client('sts').get_caller_identity()
 
@@ -93,7 +93,7 @@ sEndDate = str(dateToday.year)+ "-" + str(dateToday.month) + "-" + str(dateToday
 print(f'Last Date To Pull Data From: {sEndDate}')
 # seriesUWIs = ['0506705009']
 
-for UWI in tqdm.tqdm(seriesUWIs[:100]):
+for UWI in tqdm.tqdm(seriesUWIs):
     # time.sleep(100)
 
     try:

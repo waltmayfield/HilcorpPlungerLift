@@ -13,6 +13,7 @@ print(f'Tensorflow version: {tf.__version__}')
 
 homeDirectory = f'EBSPlungerFiles/'
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
+
 # prefix = 'DataByAPI/'
 
 # #sync Data
