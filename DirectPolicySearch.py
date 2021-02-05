@@ -149,7 +149,8 @@ for j, (tX, ty, UWI) in tqdm.tqdm(enumerate(allWellDs), total = int(np.ceil(num_
         dX_reg = dX#+regGrad
 
         # Here I'm clipping the gradient to max of 1 unit change per iteration
-        dX_reg = tf.clip_by_value(dX_reg,-1./lr,1./lr)
+        maxUnitsChange = 1.
+        dX_reg = tf.clip_by_value(dX_reg,-1*maxUnitsChange/lr,maxUnitsChange/lr)
 
         #This prevents the actor form changing settigns that controllers don't have.
         dX_masked = tf.math.multiply(dX_reg,bMaskTensor)
