@@ -17,7 +17,7 @@ sHistoryKey = r'LossCurves/2021-01-29-LossCurves.csv'
 ##This is where the session will look for the profile name
 os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
 sProfile = 'my-sso-profile-production' #Production version
-#print(os.system(f'aws sso login --profile {sProfile}')) ##Comment this out after the first run. Run again if get SSO error.
+print(os.system(f'aws sso login --profile {sProfile}')) ##Comment this out after the first run. Run again if get SSO error.
 session = boto3.Session(profile_name=sProfile)
 ################################################################################
 
