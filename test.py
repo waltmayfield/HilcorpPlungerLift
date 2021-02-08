@@ -13,15 +13,20 @@
 
 import numpy as np
 
+X = np.array(['a','b','c','catfish'])
 
-X = np.array([[1.,2.,np.nan],[3.,5.,np.nan],[np.nan, 7., np.nan]])
+arg = np.argwhere(X=='c')[0][0]
 
-print(X)
+print(arg)
 
-countNan = ~np.isnan(X)
-countNan = np.sum(countNan, axis = 0)
-emptyColumns = (countNan == 0)
-X = np.where(emptyColumns,100,X)
+# X = np.array([[1.,2.,np.nan],[3.,5.,np.nan],[np.nan, 7., np.nan]])
+
+# print(X)
+
+# countNan = ~np.isnan(X)
+# countNan = np.sum(countNan, axis = 0)
+# emptyColumns = (countNan == 0)
+# X = np.where(emptyColumns,100,X)
 
 # print(np.where(emptyColumns,-1,X))
 

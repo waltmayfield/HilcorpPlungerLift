@@ -22,6 +22,12 @@ import FunctionsTF as F
 
 pd.set_option("display.precision", 1)
 
+
+#########################  Parameters ########################
+buffer_size = 8
+batch_size = 2
+###############################################################
+
 print(f'TF version: {tf.__version__}')
 lGpus = tf.config.experimental.list_physical_devices('GPU')
 print(f'GPUs: {lGpus}')
@@ -31,8 +37,6 @@ bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 model_name = r'2020-12-16_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
 
 model_save_location = homeDirectory + r'Models/' + model_name
-buffer_size = 8
-batch_size = 3
 
 outputPath = homeDirectory + r'RecommendedSettings/' + datetime.today().strftime('%Y-%m-%d') + '-RecommendedSettings.csv'
 S3outputPath = f"s3://{bucket_name}/RecommendedSettings/{datetime.today().strftime('%Y-%m-%d')}-RecommendedSettings.csv"
