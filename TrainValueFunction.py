@@ -22,7 +22,7 @@ numGPUs = len(lGpus)
 training_epochs = 1000
 validation_split = 0.1
 batch_size = numGPUs*4
-num_parallel_calls = 8
+num_parallel_reads = 8
 buffer_size = 8
 ######################################################################
 
@@ -97,11 +97,11 @@ numValidWells = num_examples - numTrainWells
 print(f"Number of training wells: {numTrainWells}, Validation wells: {numValidWells} of total wells {num_examples}")
 
 ########################### This Makes the data set #############################
-raw_dataset = tf.data.TFRecordDataset(lTFRecordFiles)
+raw_dataset = tf.data.TFRecordDataset(lTFRecordFiles, num_parallel_reads = num_parallel_reads)
 # allWellDs = allWellDs.map(lambda x, y: (x[:100,:],y[:100,:]))#This is just for testing purposes to trim X for shorter computation
 
 trainDs = raw_dataset.skip(numValidWells)
-trainDs = trainDs.map(F.parse_raw_examples_UWI, num_parallel_calls=num_parallel_calls)
+trainDs = trainDs.map(F.parse_raw_examples_UWI)
 trainDs = trainDs.map(lambda x, y, UWIs: (x,y))#This is to remove the UWI which is not useful in trianing
 trainDs = trainDs.map(lambda x, y: (tf.reverse(x, axis = [0]),tf.reverse(y, axis = [0])))#This is to have leading instead of trailing 0s. Reverse the time direction
 trainDs = trainDs.padded_batch(batch_size, padded_shapes=([None,79],[None,2]))# Add the 0s behind the example
@@ -110,7 +110,7 @@ trainDs = trainDs.prefetch(buffer_size)
 # trainDs = trainDs.cache(r'./')
 
 validDs = raw_dataset.take(numValidWells)
-validDs = validDs.map(F.parse_raw_examples_UWI, num_parallel_calls=num_parallel_calls)
+validDs = validDs.map(F.parse_raw_examples_UWI)
 validDs = validDs.map(lambda x, y, UWIs: (x,y))#This is to remove the UWI which is not useful in trianing
 validDs = validDs.map(lambda x, y: (tf.reverse(x, axis = [0]),tf.reverse(y, axis = [0])))
 validDs = validDs.padded_batch(batch_size, padded_shapes=([None,79],[None,2]))
