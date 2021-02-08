@@ -25,7 +25,7 @@ pd.set_option("display.precision", 1)
 
 #########################  Parameters ########################
 buffer_size = 8
-batch_size = 2
+batch_size = 3
 ###############################################################
 
 print(f'TF version: {tf.__version__}')
