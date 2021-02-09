@@ -67,6 +67,9 @@ out = Concatenate(axis = 2)([outMCF,outPS])
 
 model = Model(inputs = inputs, outputs = out)
 
+model_name = r'2021-01-29_469472-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
+
+
 print('###### Model Summary ########')
 print(model.summary())
 
