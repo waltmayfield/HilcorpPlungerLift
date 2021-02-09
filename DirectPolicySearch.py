@@ -34,7 +34,9 @@ print(f'GPUs: {lGpus}')
 
 homeDirectory = r'/EBSPlungerFiles/'
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
-model_name = r'2020-12-16_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
+
+#model_name = r'2020-12-16_460k_Param_LSTM_Skip_resBlock_311Epoch.h5'
+model_name = r'2021-01-29_469472-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
 
 model_save_location = homeDirectory + r'Models/' + model_name
 
@@ -50,8 +52,8 @@ print(f'TF Record Files: {[f for f in os.listdir(TFRecordDirectory)]}')
 #my_strategy = tf.distribute.MirroredStrategy()
 
 model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
-# print('Model Summary')
-# print(model.summary())# tf.keras.utils.plot_model(model,show_shapes=True)
+print('Model Summary')
+print(model.summary())# tf.keras.utils.plot_model(model,show_shapes=True)
 
 s3_client = boto3.client('s3')
 s3_resource = boto3.resource('s3')
