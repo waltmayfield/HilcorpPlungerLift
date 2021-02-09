@@ -24,11 +24,11 @@ validation_split = 0.1
 batch_size = numGPUs*4
 num_parallel_reads = 8
 buffer_size = 8
+
+model_name = r'2021-02-09_443776-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
 ######################################################################
 
 homeDirectory = r'/EBSPlungerFiles/'
-
-model_name = r'2021-01-29_469472-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
 model_save_location = homeDirectory + r'Models/' + model_name
 #output_model_save_location = homeDirectory + r'Models/' + r'20201216_460k_Param_LSTM_Skip_resBlock.h5'
 
