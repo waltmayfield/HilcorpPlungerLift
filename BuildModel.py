@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, GRU, LSTM, Dense, TimeDistributed, Activation, BatchNormalization, Concatenate, LeakyReLU
+from tensorflow.keras.layers import Input, GRU, LSTM, Dense, TimeDistributed, Activation, BatchNormalization, Concatenate, LeakyReLU, Dropout
 from tensorflow.keras import regularizers
 import boto3
 import pydot, graphviz
@@ -14,7 +14,6 @@ import FunctionsTF as F
 print(f'Tensorflow version: {tf.__version__}')
 
 sModelDescription = r'LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
-dot_img_file = r'U:\Projects\_Output Files/model_1.png'
 
 ##################### Authentication #########################################
 #This is where the session will look for the profile name
@@ -54,7 +53,7 @@ RUPS = LSTM(2**3,return_sequences=True, kernel_regularizer = regularizer, recurr
 
 concatPS = Concatenate(axis = 2)([RUPS,bNorm])
 densePS = Dense(2**5,kernel_regularizer = regularizer)(concatPS)
-for _ in range(3):
+for _ in range(2):
   # densePS = Dense(2**7,kernel_regularizer = regularizer)(densePS)
   densePS = F.resBlock(densePS, l2Reg = 0.02)
 
@@ -73,7 +72,7 @@ model_name = r'2021-01-29_469472-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Le
 print('###### Model Summary ########')
 print(model.summary())
 
-tf.keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)
+# tf.keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)
 
 # from keras.utils import plot_model
 # plot_model(model)
@@ -104,6 +103,13 @@ print(f'Saving model to {sModelSaveLocation}')
 
 model.save(sModelSaveLocation)
 
+sImgName = sModelName[:-3] + r'.png'
+sImgSaveLocation = os.path.join(homeDirectory, sImgName)
+
+tf.keras.utils.plot_model(model, to_file=sImgSaveLocation, show_shapes=True)
+
+S3ImgKey = r"Models/" + sImgName
+
 S3outputKey = r"Models/" + sModelName
 
 s3_client = session.client('s3')
@@ -111,3 +117,4 @@ s3_client = session.client('s3')
 print(f'Uploading to bucket: {bucket_name}, key: {S3outputKey}')
 
 s3_client.upload_file(sModelSaveLocation,bucket_name,S3outputKey)
+s3_client.upload_file(sImgSaveLocation,bucket_name,S3ImgKey)

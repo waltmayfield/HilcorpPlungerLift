@@ -5,7 +5,6 @@ import sys
 import boto3
 from botocore.exceptions import NoCredentialsError
 from io import StringIO, BytesIO
-import pandas as pd
 import tqdm
 import os
 import time
