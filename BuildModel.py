@@ -108,7 +108,7 @@ sImgSaveLocation = os.path.join(homeDirectory, sImgName)
 
 tf.keras.utils.plot_model(model, to_file=sImgSaveLocation, show_shapes=True)
 
-S3ImgKey = r"Models/" + sImgName
+S3ImgKey = r"Models/ModelPictures/" + sImgName
 
 S3outputKey = r"Models/" + sModelName
 
