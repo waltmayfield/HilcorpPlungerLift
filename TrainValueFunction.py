@@ -25,8 +25,8 @@ batch_size = numGPUs*4
 num_parallel_reads = 8
 buffer_size = 8
 
-model_name = r'2021-02-10_441536-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
-#model_name = r'2021-01-29_469472-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
+#model_name = r'2021-02-10_441536-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
+model_name = r'2021-01-29_469472-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
 ######################################################################
 
 homeDirectory = r'/EBSPlungerFiles/'
