@@ -201,7 +201,7 @@ def convert_ds_to_TFRecord(ds, name, directory):
 
 if __name__ == "__main__":
     DataFileNames = [homeDirectory + r'DataByAPI/*.csv']
-    raw_dataset = tf.data.Dataset.list_files(DataFileNames)
+    raw_dataset = tf.data.Dataset.list_files(DataFileNames, shuffle = True, seed = 42)
 
     ######## The take(5) is only for test purposes #######
     allWellDs = raw_dataset.map(process_path)
