@@ -22,7 +22,6 @@ sProfile = 'my-sso-profile-production' #Production version
 session = boto3.Session(profile_name=sProfile)
 ################################################################################
 
-
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
 sHistoryURI = f's3://hilcorp-l48operations-plunger-lift-main/LossCurves/{sHistoryKey}'
 

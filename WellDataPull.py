@@ -154,7 +154,7 @@ for UWI in tqdm.tqdm(seriesUWIs):
     AND C.DATE_CALC <  DATE '{}'
     AND C.DATE_CALC >= DATE '{}'
 
-    AND C.PERCENT_CL_END_FLOW IS NOT NULL
+    AND C.PERCENT_CL_END_FLOW IS NOT NULL --This will be removed in future versions
     AND D.WELLIDA = '{}'
     --AND ROWNUM < 100
     ORDER BY C.PLOT_WB_ID, C.START_TIME

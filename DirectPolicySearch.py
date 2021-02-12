@@ -96,7 +96,7 @@ allWellDs = allWellDs.map(lambda x, y, UWI: (tf.reverse(x, axis = [1]),tf.revers
 def loss_function(prediction, y):
     rateLoss = -1*prediction[:,-1,0]
 
-    acceptablePlungerSpeeds = y[:,-22:-2,1].mean(axis = 1)*1.01 #Avg of last 20 arrival speeds * factor. The factor increases safety but decreases production increase.
+    acceptablePlungerSpeeds = y[:,-22:-2,1].mean(axis = 1)*0.99 #Avg of last 20 arrival speeds * factor. The factor allows 1% plunger speed decrease from current value.
     acceptablePlungerSpeeds = np.clip(acceptablePlungerSpeeds,650,800)#No acceptable plunger speed below 650 or above 800 is allowed. These values are cliped to that range
 
     plungerSpeed = prediction[:,-1,1]
