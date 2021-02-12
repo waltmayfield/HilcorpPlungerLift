@@ -17,6 +17,16 @@ sHistoryKey = r'LossCurves/2021-01-29-LossCurves.csv'
 ##################### Authentication #########################################
 ##This is where the session will look for the profile name
 os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
+#####This is what's in the config file
+# [profile my-sso-profile-production]
+# credential_process = aws-sso-credential-process --profile my-sso-profile
+# region = us-west-2
+# output = json
+# sso_start_url = https://hilcorp.awsapps.com/start#/
+# sso_region = us-west-2
+# sso_account_id = 446356438225
+# sso_role_name = DeveloperUserAccess
+
 sProfile = 'my-sso-profile-production' #Production version
 #print(os.system(f'aws sso login --profile {sProfile}')) ##Comment this out after the first run. Run again if get SSO error.
 session = boto3.Session(profile_name=sProfile)
@@ -59,7 +69,7 @@ ax_mse.set_yscale('log'); ax_loss.set_yscale('log'); ax_acc.set_yscale('log'); a
 ax_mse.set_title('Loss Sum'); ax_loss.set_title('MCFD Loss'); ax_acc.set_title('Plunger Speed Loss')
 ax_mse.grid(which = 'both'); ax_loss.grid(which = 'both'); ax_acc.grid(which = 'both')
 
-# ax_mse.set_ylim([None,2.9e4]);ax_loss.set_ylim([None,1200]); ax_acc.set_ylim([None,6.0e4])
+ax_mse.set_ylim([None,2.9e4]);ax_loss.set_ylim([None,1200]); ax_acc.set_ylim([None,6.0e4])
 # ax_acc.set_xlim([0,100])
 
 plt.show()
