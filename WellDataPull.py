@@ -15,7 +15,8 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
 #This is where the session will look for the profile name
-os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
+#os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
+os.environ['AWS_CONFIG_FILE'] = r"C:\Users\wmayfield\Documents\HilcorpPlungerLift\config"
 
 # sProfile = 'my-sso-profile' #Sandbox Version
 # main_bucket_name = 'hilcorp-s3-plungerlift' #Sandbox Version
@@ -27,7 +28,7 @@ bucket_name = 'hilcorp-l48operations-plunger-lift-temp' #Production version
 
 sTempFileLoc = r'./tempDf.csv'
 
-print(os.system(f'aws sso login --profile {sProfile}'))
+#print(os.system(f'aws sso login --profile {sProfile}'))
 
 session = boto3.Session(profile_name=sProfile)#.client('sts').get_caller_identity()
 
@@ -36,6 +37,20 @@ prefix = 'TempData/'  #This is for new data. It will be added to the main data s
 
 s3_client = session.client('s3')
 s3_resource = session.resource('s3')
+
+my_bucket = s3_resource.Bucket(bucket_name)
+allObjects = my_bucket.objects.all()
+#Try to make the connection. If it doesn't work run SSO
+try:
+    #APIs already in bucket
+    # my_bucket = s3_resource.Bucket(bucket_name)
+    # allObjects = my_bucket.objects.all()
+    lApisInBucket = [o.key[len(prefix):-4] for o in allObjects if o.key[0:len(prefix)] == prefix]
+except:
+    print(os.system(f'aws sso login --profile {sProfile}'))
+    # my_bucket = s3_resource.Bucket(bucket_name)
+    # allObjects = my_bucket.objects.all()
+    lApisInBucket = [o.key[len(prefix):-4] for o in allObjects if o.key[0:len(prefix)] == prefix]
 
 #Oracle Connection
 cx_Oracle.init_oracle_client(lib_dir=r'C:\Users\wmayfield\instantclient_19_8')
@@ -61,11 +76,11 @@ def loadSQL(sql):#Load Oracle SQL Query
     return pd.DataFrame(cursor.fetchall(), columns = column_names)
 
 
-#APIs already in bucket
-my_bucket = s3_resource.Bucket(bucket_name)
-allObjects = my_bucket.objects.all()
-lApisInBucket = [o.key[len(prefix):-4] for o in allObjects if o.key[0:len(prefix)] == prefix]
-lApisInBucket = [a for a in lApisInBucket if len(a) == 10]#This knocks out non API# files in the S3 bucket
+# #APIs already in bucket
+# my_bucket = s3_resource.Bucket(bucket_name)
+# allObjects = my_bucket.objects.all()
+# lApisInBucket = [o.key[len(prefix):-4] for o in allObjects if o.key[0:len(prefix)] == prefix]
+# lApisInBucket = [a for a in lApisInBucket if len(a) == 10]#This knocks out non API# files in the S3 bucket
 
 #Find all wells in the PLOT Database
 sql = """

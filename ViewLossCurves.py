@@ -16,7 +16,8 @@ sHistoryKey = r'LossCurves/2021-01-29-LossCurves.csv'
 
 ##################### Authentication #########################################
 ##This is where the session will look for the profile name
-os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
+os.environ['AWS_CONFIG_FILE'] = r"C:\Users\wmayfield\Documents\HilcorpPlungerLift\config"
+#r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
 #####This is what's in the config file
 # [profile my-sso-profile-production]
 # credential_process = aws-sso-credential-process --profile my-sso-profile
@@ -38,7 +39,12 @@ sHistoryURI = f's3://hilcorp-l48operations-plunger-lift-main/LossCurves/{sHistor
 s3_client = session.client('s3')
 
 #Donload the object using boto3
-obj = s3_client.get_object(Bucket=bucket_name, Key=sHistoryKey)
+try:
+	obj = s3_client.get_object(Bucket=bucket_name, Key=sHistoryKey)
+except:
+	print(os.system(f'aws sso login --profile {sProfile}')) #SSO Log on
+	obj = s3_client.get_object(Bucket=bucket_name, Key=sHistoryKey)
+
 histDf =pd.read_csv(io.BytesIO(obj['Body'].read()), encoding='utf8').reset_index().drop(['index'], axis = 1)
 
 #Calculated the time since last update
