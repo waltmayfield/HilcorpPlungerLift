@@ -53,6 +53,7 @@ print(f'TF Record Files: {[f for f in os.listdir(TFRecordDirectory)]}')
 
 model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
 print('Model Summary')
+print(f'Model Name: {model_name}')
 print(model.summary())# tf.keras.utils.plot_model(model,show_shapes=True)
 
 s3_client = boto3.client('s3')
