@@ -61,35 +61,12 @@ outPS = Dense(1, kernel_regularizer = regularizer)(densePS)
 
 out = Concatenate(axis = 2)([outMCF,outPS])
 
-
 ####################################### End Model Definition ##################################
 
 model = Model(inputs = inputs, outputs = out)
 
 print('###### Model Summary ########')
 print(model.summary())
-
-# tf.keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)
-
-# from keras.utils import plot_model
-# plot_model(model)
-
-# import keras
-# import pydot as pyd
-# from IPython.display import SVG
-# from keras.utils.vis_utils import model_to_dot
-
-# keras.utils.vis_utils.pydot = pyd
-
-# #Visualize Model
-
-# def visualize_model(model):
-#   return SVG(model_to_dot(model).create(prog='dot', format='svg'))
-# #create your model
-# #then call the function on your model
-# visualize_model(model)
-
-
 
 trainableVars = np.sum([np.prod(v.get_shape().as_list()) for v in model.trainable_variables])
 sModelStats = f"{datetime.today().strftime('%Y-%m-%d')}_{trainableVars}-TrainableVars_"
