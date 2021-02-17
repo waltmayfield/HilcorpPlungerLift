@@ -74,9 +74,9 @@ except:#If there is no existing historyDf in s3, make a local one for upload lat
 #Download the current history path
 #dfHistory = pd.read_csv(historyPath)
 
-# strategy = tf.distribute.MirroredStrategy() #This creates a distributed training strategy
-# with strategy.scope(): #Models defined withing strategy.scope() are distributed amoung GPUs
-model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
+strategy = tf.distribute.MirroredStrategy() #This creates a distributed training strategy
+with strategy.scope(): #Models defined withing strategy.scope() are distributed amoung GPUs
+  model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
 print('########## Model Summary #############')
 print(model.summary())# tf.keras.utils.plot_model(model,show_shapes=True)
 
