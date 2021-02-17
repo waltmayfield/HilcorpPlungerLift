@@ -8,7 +8,7 @@ yum install -y git
 
 ### This is ment to enable GPU monitoring
 pip install pynvml
-### You need to edit gpumon.py to have the correct region before running the file
+### You need to edit gpumon.py to have the correct region before running the file. The logs will be under DeepLearningTrain metric group
 python /home/ubuntu/tools/GPUCloudWatchMonitor/gpumon.py &
 
 #Not sure if these will be accessable to ec2-user if made by root
