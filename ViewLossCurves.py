@@ -18,7 +18,7 @@ sHistoryKey = r'LossCurves/2021-01-29-LossCurves.csv'
 ##This is where the session will look for the profile name
 os.environ['AWS_CONFIG_FILE'] = r"C:\Users\wmayfield\Documents\HilcorpPlungerLift\config"
 #r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
-#####This is what's in the config file
+#####This is what's in the config file. No file extention
 # [profile my-sso-profile-production]
 # credential_process = aws-sso-credential-process --profile my-sso-profile
 # region = us-west-2
@@ -55,7 +55,7 @@ dt = (d_aware - obj['LastModified']).total_seconds()
 print('Last update: {:.2f} minutes ago'.format(dt/60))
 
 #print the last few rows of the loss curve csv file
-print(histDf.tail(10))
+print(histDf.tail(5))
 
 #Create the figure
 fig, (ax_mse, ax_loss, ax_acc) = plt.subplots(1, 3, figsize=(25,5))
