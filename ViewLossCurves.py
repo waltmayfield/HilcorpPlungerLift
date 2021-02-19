@@ -3,7 +3,7 @@ import datetime
 import pytz
 import boto3
 import matplotlib.pyplot as plt, pandas as pd
-import fsspec, s3fs
+# import fsspec, s3fs
 
 # pd.set_option("display.precision", 0)
 pd.set_option('display.max_rows', 500)
@@ -16,17 +16,9 @@ sHistoryKey = r'LossCurves/2020-12-16-LossCurves.csv'
 
 ##################### Authentication #########################################
 ##This is where the session will look for the profile name
-os.environ['AWS_CONFIG_FILE'] = r"C:\Users\wmayfield\Documents\HilcorpPlungerLift\config"
+os.environ['AWS_CONFIG_FILE'] = os.path.abspath('./config')
+# r"C:\Users\wmayfield\Documents\HilcorpPlungerLift\config"
 #r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
-#####This is what's in the config file. No file extention
-# [profile my-sso-profile-production]
-# credential_process = aws-sso-credential-process --profile my-sso-profile
-# region = us-west-2
-# output = json
-# sso_start_url = https://hilcorp.awsapps.com/start#/
-# sso_region = us-west-2
-# sso_account_id = 446356438225
-# sso_role_name = DeveloperUserAccess
 
 sProfile = 'my-sso-profile-production' #Production version
 #print(os.system(f'aws sso login --profile {sProfile}')) ##Comment this out after the first run. Run again if get SSO error.
@@ -38,7 +30,7 @@ sHistoryURI = f's3://hilcorp-l48operations-plunger-lift-main/LossCurves/{sHistor
 
 s3_client = session.client('s3')
 
-#Donload the object using boto3
+#Download the object using boto3
 try:
 	obj = s3_client.get_object(Bucket=bucket_name, Key=sHistoryKey)
 except:
