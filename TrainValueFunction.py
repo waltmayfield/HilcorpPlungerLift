@@ -24,10 +24,11 @@ validation_split = 0.1
 batch_size = numGPUs*4
 num_parallel_reads = 8
 buffer_size = 8
+optimizer = Adam(lr = 1e-4)
 
 # model_name = r'2021-02-10_441536-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
-# model_name = r'2021-01-29_469472-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
-model_name = r'2020-12-16_460k_Param_LSTM_Skip_resBlock.h5'
+model_name = r'2021-01-29_469472-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
+# model_name = r'2020-12-16_460k_Param_LSTM_Skip_resBlock.h5'
 ######################################################################
 
 homeDirectory = r'/EBSPlungerFiles/'
@@ -159,7 +160,7 @@ class EpochLogger(tf.keras.callbacks.Callback):
 terminateOnNaN = keras.callbacks.TerminateOnNaN()
 log_results = EpochLogger(historyPathLoc)
 
-optimizer = Adam(lr = 1e-3)
+# optimizer = Adam(lr = 1e-3)
 model.compile(loss=M.custom_loss, optimizer=optimizer, metrics = [M.MCF_metric, M.plunger_speed_metric])
 
 steps_per_epoch = int(np.ceil(numTrainWells/batch_size))
