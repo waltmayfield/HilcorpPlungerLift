@@ -11,8 +11,8 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 pd.options.display.float_format = '{:,.0f}'.format
 
-sHistoryKey = r'LossCurves/2021-01-29-LossCurves.csv'
-# sHistoryKey = r'LossCurves/2021-02-10-LossCurves.csv')
+# sHistoryKey = r'LossCurves/2021-01-29-LossCurves.csv'
+sHistoryKey = r'LossCurves/2020-12-16-LossCurves.csv'
 
 ##################### Authentication #########################################
 ##This is where the session will look for the profile name
@@ -75,7 +75,7 @@ ax_mse.set_yscale('log'); ax_loss.set_yscale('log'); ax_acc.set_yscale('log'); a
 ax_mse.set_title('Loss Sum'); ax_loss.set_title('MCFD Loss'); ax_acc.set_title('Plunger Speed Loss')
 ax_mse.grid(which = 'both'); ax_loss.grid(which = 'both'); ax_acc.grid(which = 'both')
 
-ax_mse.set_ylim([None,2.9e4]);ax_loss.set_ylim([None,1200]); ax_acc.set_ylim([None,6.0e4])
+# ax_mse.set_ylim([None,2.9e4]);ax_loss.set_ylim([None,1200]); ax_acc.set_ylim([None,6.0e4])
 # ax_acc.set_xlim([0,100])
 
 plt.show()
