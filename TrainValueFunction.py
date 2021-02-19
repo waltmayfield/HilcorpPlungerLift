@@ -26,11 +26,9 @@ num_parallel_reads = 8
 buffer_size = 8
 
 # model_name = r'2021-02-10_441536-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
-# model_name = r'2021-01-29_469472-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5')
+# model_name = r'2021-01-29_469472-TrainableVars_LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
 model_name = r'2020-12-16_460k_Param_LSTM_Skip_resBlock.h5'
 ######################################################################
-
-print(f'Training Model: {model_name}')
 
 homeDirectory = r'/EBSPlungerFiles/'
 model_save_location = homeDirectory + r'Models/' + model_name
@@ -81,6 +79,7 @@ strategy = tf.distribute.MirroredStrategy() #This creates a distributed training
 with strategy.scope(): #Models defined withing strategy.scope() are distributed amoung GPUs
   model = load_model(model_save_location, compile = False, custom_objects = {'LeakyReLU' : LeakyReLU()})
 print('########## Model Summary #############')
+print(f'Training Model: {model_name}')
 print(model.summary())# tf.keras.utils.plot_model(model,show_shapes=True)
 
 ## This gets the most recent data file
