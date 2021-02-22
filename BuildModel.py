@@ -17,7 +17,7 @@ sModelDescription = r'LSTM_Skip_resBlock_Larger_MCFD_Leg.h5'
 
 ##################### Authentication #########################################
 #This is where the session will look for the profile name
-os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
+os.environ['AWS_CONFIG_FILE'] = os.path.abspath('./config')#r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
 sProfile = 'my-sso-profile-production' #Production version
 #print(os.system(f'aws sso login --profile {sProfile}'))
 session = boto3.Session(profile_name=sProfile)
