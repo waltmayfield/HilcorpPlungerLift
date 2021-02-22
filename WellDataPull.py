@@ -16,7 +16,7 @@ pd.set_option('display.width', 1000)
 
 #This is where the session will look for the profile name
 #os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
-os.environ['AWS_CONFIG_FILE'] = r"C:\Users\wmayfield\Documents\HilcorpPlungerLift\config"
+os.environ['AWS_CONFIG_FILE'] = os.path.abspath('./config')#r"C:\Users\wmayfield\Documents\HilcorpPlungerLift\config"
 
 # sProfile = 'my-sso-profile' #Sandbox Version
 # main_bucket_name = 'hilcorp-s3-plungerlift' #Sandbox Version
