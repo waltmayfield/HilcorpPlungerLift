@@ -162,7 +162,7 @@ for UWI in tqdm.tqdm(seriesUWIs):
     WHERE C.IS_PARTIAL_CYCLE = 0
 
     -- AND C.DATE_CALC <  DATE '2020-11-14'
-    AND C.DATE_CALC <  DATE '{}'
+    AND C.DATE_CALC <=  DATE '{}'
     AND C.DATE_CALC >= DATE '{}'
 
     AND C.PERCENT_CL_END_FLOW IS NOT NULL --This will be removed in future versions
