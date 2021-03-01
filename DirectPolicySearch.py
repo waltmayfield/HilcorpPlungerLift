@@ -201,11 +201,12 @@ for j, (tX, ty, UWI) in tqdm.tqdm(enumerate(allWellDs), total = int(np.ceil(num_
     df.insert(11,'Policy Loss',current_loss)
 
     df.insert(0,'UWI',UWIs)
-    df.insert(1,'DMCFD',yhat[:,-1,0]-yhatOriginal[:,-1,0])
-    df.insert(2,'Avg20DMCFD',yhat[:,-1,0]-y[:,-22:-2,0].mean(axis = 1))
-    df.insert(3,'PredPSSuggested',yhat[:,-1,1])
-    df.insert(4,'PredPSOriginal',yhatOriginal[:,-1,1])
-    df.insert(5,'Avg20LastPS',y[:,-22:-2,1].mean(axis = 1))
+    df.insert(1,'PredMCFD',yhat[:,-1,0])
+    df.insert(2,'DMCFD',yhat[:,-1,0]-yhatOriginal[:,-1,0])
+    df.insert(3,'Avg20DMCFD',yhat[:,-1,0]-y[:,-22:-2,0].mean(axis = 1))
+    df.insert(4,'PredPSSuggested',yhat[:,-1,1])
+    df.insert(5,'PredPSOriginal',yhatOriginal[:,-1,1])
+    df.insert(6,'Avg20LastPS',y[:,-22:-2,1].mean(axis = 1))
 
 
     dfSuggestions = pd.concat((dfSuggestions,df))
