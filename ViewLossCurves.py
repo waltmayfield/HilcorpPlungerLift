@@ -23,6 +23,12 @@ os.environ['AWS_CONFIG_FILE'] = os.path.abspath('./config')
 sProfile = 'my-sso-profile-production' #Production version
 #print(os.system(f'aws sso login --profile {sProfile}')) ##Comment this out after the first run. Run again if get SSO error.
 session = boto3.Session(profile_name=sProfile)
+
+#Experiment sso verification
+try:
+	print(os.system(f'aws s3 ls --profile {sProfile}'))
+else:
+	print(os.system(f'aws sso login --profile {sProfile}')) #SSO Log on
 ################################################################################
 
 bucket_name = 'hilcorp-l48operations-plunger-lift-main'
