@@ -106,6 +106,8 @@ print(f'Last Date To Pull Data From: {sEndDate}')
 for UWI in tqdm.tqdm(seriesUWIs):
     # time.sleep(100)
 
+    # UWI = '3003926762'#This is for testing
+
     try:
         obj = s3_client.get_object(Bucket=main_bucket_name, Key=main_prefix + str(UWI) + '.csv')
         lastDate = obj['LastModified'].date()+ timedelta(days=-7)#It's OK to pull a small overlap. The overlap will not be written to the main file
