@@ -15,7 +15,7 @@ url = 'https://gv1yedhm7b.execute-api.us-west-2.amazonaws.com/prod/UploadToS3'
 
 myobj = json.dumps({
 	'name': fileName,
-	'species': 'Flamingo',
+	'taxonomy': {'species': 'Flamingo'},
 	'file': encoded_string.decode(ENCODING)
 	},
 	indent = 2)
