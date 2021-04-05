@@ -9,11 +9,7 @@ import tqdm
 import os
 import time
 from datetime import datetime, timedelta, date
-
-pd.set_option('display.max_rows', 500)
-pd.set_option('display.max_columns', 500)
-pd.set_option('display.width', 1000)
-
+ 
 #This is where the session will look for the profile name
 #os.environ['AWS_CONFIG_FILE'] = r'U:\Projects\ML Plunger Lift Optimizer\.aws\config'
 os.environ['AWS_CONFIG_FILE'] = os.path.abspath('./config')#r"C:\Users\wmayfield\Documents\HilcorpPlungerLift\config"
@@ -185,3 +181,16 @@ for UWI in tqdm.tqdm(seriesUWIs):
     # print(UWI)
     # break
 os.remove(sTempFileLoc)
+
+#Now wait 20 minutes for the lambdas to complete and run the policy search step function
+for i in tqdm.tqdm(range(20)):
+    time.sleep(60)
+
+#Create a step function client
+SFNclient = session.client('stepfunctions', region_name = 'us-west-2')
+
+response = SFNclient.start_execution(
+    stateMachineArn='arn:aws:states:us-west-2:446356438225:stateMachine:PlungerPolicySearch'
+)
+
+print(response)
