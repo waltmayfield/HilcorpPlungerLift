@@ -189,6 +189,7 @@ for i in tqdm.tqdm(range(20)):
 #Create a step function client
 SFNclient = session.client('stepfunctions', region_name = 'us-west-2')
 
+#Start the step function to make plunger lift settings recommendations
 response = SFNclient.start_execution(
     stateMachineArn='arn:aws:states:us-west-2:446356438225:stateMachine:PlungerPolicySearch'
 )
