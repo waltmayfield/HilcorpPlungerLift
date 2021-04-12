@@ -119,7 +119,7 @@ for j, (tX, ty, UWI) in tqdm.tqdm(enumerate(allWellDs), total = int(np.ceil(num_
     y = ty.numpy()
     UWIs = list(map(lambda x: x.decode('utf-8'),UWI.numpy()))
 
-    if X.shape[0] == 0 or X.shape[1] == 0 or len(UWIs)!=X.shape[0]: continue
+    if X.shape[0] == 0 or X.shape[1] == 0 or len(UWIs)!=X.shape[0]: print(f'Insufficient data for well in batch. X shape: {X.shape}'); continue
 
     # print(UWIs)
     print('X shape: {}'.format(X.shape))
@@ -254,4 +254,6 @@ print(dfSuggestions.sort_values(by = ['DMCFD'], ascending = False).head(20))
 
 dfSuggestions.to_csv(outputPath, index = False)#Save the data frame 
 
+
+print(f"Now uplading file: {outputPath}")
 s3_client.upload_file(outputPath,bucket_name,S3outputKey)
