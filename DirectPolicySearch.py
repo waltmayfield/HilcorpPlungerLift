@@ -255,5 +255,5 @@ print(dfSuggestions.sort_values(by = ['DMCFD'], ascending = False).head(20))
 dfSuggestions.to_csv(outputPath, index = False)#Save the data frame 
 
 
-print(f"Now uplading file: {outputPath}")
+print(f"Now uploading file: {outputPath}")
 s3_client.upload_file(outputPath,bucket_name,S3outputKey)
