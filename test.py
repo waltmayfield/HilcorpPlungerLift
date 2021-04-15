@@ -5,7 +5,7 @@ import pyodbc
 server = 'frmsql03'
 database = 'SJDW_BI' 
 
-print(f"Attempting to initiate connection to server: " + server +", database:" + database)
+print("Attempting to initiate connection to server: " + server +", database:" + database)
 
 #This makes the connection with the server. If there is an error here the connection failed.
 # cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';Trusted_Connection=yes;')
