@@ -27,7 +27,8 @@ SelectedAssetCodes = "({})".format(",".join(lAssetCodes))
 
 #This makes the connection with the server. If there is an error here the connection failed.
 # cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';Trusted_Connection=yes;')
-cnxn = pyodbc.connect('DRIVER={ODBC Driver 13 for SQL Server};SERVER='+server+';DATABASE='+database+';Trusted_Connection=yes;')
+cnxn = pyodbc.connect('DRIVER={ODBC Driver 13 for SQL Server};SERVER='+server+';DATABASE='+database+';uid=home;pwd=1234;')
+
 
 sql = """
 	SELECT A.AssetCode AS AssetCode, MAX(A.AssetName) AS AssetName, MAX(A.ProductionArea) as Area, MAX(A.OperatorRoute) As Route, MAX(A.Formations) AS Formations, MAX(C.InUse) AS WellheadCompInUse, 
