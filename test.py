@@ -2,10 +2,10 @@ import pandas as pd
 import pyodbc
 
 #Server and database info
-server = 'frmsql03'
+server = 'frmsql03.hilcorp.com'
 database = 'SJDW_BI' 
 
-print("Attempting to initiate connection to server: " + server +", database:" + database)
+print("Attempting to initiate connection to server: " + server +", database: " + database)
 
 #This makes the connection with the server. If there is an error here the connection failed.
 # cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';Trusted_Connection=yes;')
