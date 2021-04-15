@@ -4,7 +4,7 @@ import cx_Oracle
 import os
 
 # #Oracle Connection
-# cx_Oracle.init_oracle_client(lib_dir=r'C:\Users\wmayfield\instantclient_19_8')
+cx_Oracle.init_oracle_client(lib_dir=r'C:\Users\wmayfield\instantclient_19_8')
 dsn = """(DESCRIPTION =
     (ADDRESS = (PROTOCOL = TCP)(HOST = aztplotdb.hilcorp.com)(PORT = 1521))
     (CONNECT_DATA =
