@@ -8,18 +8,6 @@ database = 'SJDW_BI'
 
 #Test
 sAssetCodes = """
-3003922211
-3003921922
-3003922749
-3003921921
-3003925734
-3003921923
-3003907914
-3003907890
-3003907915
-3003907872
-3003907873
-3003907853
 3003907861
 
 """
@@ -38,7 +26,8 @@ lAssetCodes = ["'{}'".format(x) for x in lAssetCodes]
 SelectedAssetCodes = "({})".format(",".join(lAssetCodes))
 
 #This makes the connection with the server. If there is an error here the connection failed.
-cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';Trusted_Connection=yes;')
+# cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';Trusted_Connection=yes;')
+cnxn = pyodbc.connect('DRIVER={ODBC Driver 13 for SQL Server};SERVER='+server+';DATABASE='+database+';Trusted_Connection=yes;')
 
 sql = """
 	SELECT A.AssetCode AS AssetCode, MAX(A.AssetName) AS AssetName, MAX(A.ProductionArea) as Area, MAX(A.OperatorRoute) As Route, MAX(A.Formations) AS Formations, MAX(C.InUse) AS WellheadCompInUse, 
