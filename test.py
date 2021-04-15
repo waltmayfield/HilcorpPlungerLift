@@ -1,5 +1,6 @@
 import pandas as pd
-import pyodbc
+# import pyodbc
+import cx_Oracle
 
 # #Oracle Connection
 # cx_Oracle.init_oracle_client(lib_dir=r'C:\Users\wmayfield\instantclient_19_8')
