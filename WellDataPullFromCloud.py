@@ -23,6 +23,7 @@ main_bucket_name = 'hilcorp-l48operations-plunger-lift-main' #Production version
 bucket_name = 'hilcorp-l48operations-plunger-lift-temp' #Production version
 
 sTempFileLoc = r'./tempDf.csv'
+csv_buffer = StringIO()
 
 #print(os.system(f'aws sso login --profile {sProfile}'))
 
@@ -177,10 +178,19 @@ for UWI in tqdm.tqdm(seriesUWIs):
     if tempDf.shape[0] < 1:
         continue#This is in case there is no data for a well
 
-    tempDf.to_csv(sTempFileLoc, index = False)
+    # tempDf.to_csv(sTempFileLoc, index = False)
 
-    s3_client.upload_file(sTempFileLoc,bucket_name,prefix + '{}.csv'.format(UWI))
+    # # print(f"Uploading {sTempFileLoc} to bucket {bucket_name} and key {prefix + '{}.csv'.format(UWI)}")
 
+    # s3_client.upload_file(sTempFileLoc,bucket_name,prefix + '{}.csv'.format(UWI))
+
+    # s3Key = prefix + '{}.csv'.format(UWI)
+    s3Key = prefix + 'testWellFile.csv'
+
+    tempDf.to_csv(csv_buffer, index = False)
+    s3_resource.Object(bucket_name, s3Key).put(Body = csv_buffer.getvalue())
+
+    a = 1/0
     # print(UWI)
     # break
 os.remove(sTempFileLoc)
