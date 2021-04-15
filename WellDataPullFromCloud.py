@@ -179,9 +179,6 @@ for UWI in tqdm.tqdm(seriesUWIs):
         continue#This is in case there is no data for a well
 
     # tempDf.to_csv(sTempFileLoc, index = False)
-
-    
-
     # s3_client.upload_file(sTempFileLoc,bucket_name,prefix + '{}.csv'.format(UWI))
 
     s3Key = prefix + '{}.csv'.format(UWI)
@@ -191,8 +188,6 @@ for UWI in tqdm.tqdm(seriesUWIs):
 
     tempDf.to_csv(csv_buffer, index = False)
     s3_resource.Object(bucket_name, s3Key).put(Body = csv_buffer.getvalue())
-
-    exit()
 
     # print(UWI)
     # break
