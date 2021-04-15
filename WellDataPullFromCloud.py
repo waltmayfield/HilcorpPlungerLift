@@ -22,7 +22,7 @@ sProfile = 'my-sso-profile-production' #Production version
 main_bucket_name = 'hilcorp-l48operations-plunger-lift-main' #Production version
 bucket_name = 'hilcorp-l48operations-plunger-lift-temp' #Production version
 
-sTempFileLoc = r'./tempDf.csv'
+# sTempFileLoc = r'./tempDf.csv'
 csv_buffer = StringIO()
 
 #print(os.system(f'aws sso login --profile {sProfile}'))
@@ -184,14 +184,15 @@ for UWI in tqdm.tqdm(seriesUWIs):
     s3Key = prefix + '{}.csv'.format(UWI)
     # s3Key = prefix + 'testWellFile.csv'
 
-    print(f"Uploading {sTempFileLoc} to bucket {bucket_name} and key {s3Key}")
+    # print(f"Uploading {sTempFileLoc} to bucket {bucket_name} and key {s3Key}")
 
     tempDf.to_csv(csv_buffer, index = False)
     s3_resource.Object(bucket_name, s3Key).put(Body = csv_buffer.getvalue())
 
+    csv_buffer.truncate(0) #Likely not necessary but it makes me feel safer. Layered security right?
     # print(UWI)
     # break
-os.remove(sTempFileLoc)
+# os.remove(sTempFileLoc)
 
 #Now wait 20 minutes for the lambdas to complete and run the policy search step function
 print("Now waiting 20 mintues for data prep lambdas to complete before initiating step fuction")
