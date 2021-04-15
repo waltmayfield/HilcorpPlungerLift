@@ -180,17 +180,20 @@ for UWI in tqdm.tqdm(seriesUWIs):
 
     # tempDf.to_csv(sTempFileLoc, index = False)
 
-    # # print(f"Uploading {sTempFileLoc} to bucket {bucket_name} and key {prefix + '{}.csv'.format(UWI)}")
+    
 
     # s3_client.upload_file(sTempFileLoc,bucket_name,prefix + '{}.csv'.format(UWI))
 
-    # s3Key = prefix + '{}.csv'.format(UWI)
-    s3Key = prefix + 'testWellFile.csv'
+    s3Key = prefix + '{}.csv'.format(UWI)
+    # s3Key = prefix + 'testWellFile.csv'
+
+    print(f"Uploading {sTempFileLoc} to bucket {bucket_name} and key {s3Key}")
 
     tempDf.to_csv(csv_buffer, index = False)
     s3_resource.Object(bucket_name, s3Key).put(Body = csv_buffer.getvalue())
 
-    a = 1/0
+    exit()
+
     # print(UWI)
     # break
 os.remove(sTempFileLoc)
