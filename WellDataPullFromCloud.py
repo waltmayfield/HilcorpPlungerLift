@@ -55,6 +55,8 @@ dsn = """(DESCRIPTION =
   )
     """
 
+print(f'Environmental variables: {os.environ}')
+
 connection = cx_Oracle.connect("wmayfield", os.environ["ORACLEPSWD"], dsn, encoding="UTF-8")
 
 def loadSQL(sql):#Load Oracle SQL Query
