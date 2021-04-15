@@ -41,6 +41,8 @@ sql = """
 	GROUP BY A.AssetCode, M.MeterName
 	""".format(SelectedAssetCodes)
 
+print(sql)
+
 wells_df = pd.read_sql(sql,cnxn)
 
 print(wells_df.head())
