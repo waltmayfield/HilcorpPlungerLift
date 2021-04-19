@@ -184,7 +184,7 @@ for UWI in tqdm.tqdm(seriesUWIs):
     s3Key = prefix + '{}.csv'.format(UWI)
     # s3Key = prefix + 'testWellFile.csv'
 
-    print(f"Uploading to bucket {bucket_name} and key {s3Key}")
+    print(f"Uploading well # {seriesUWIs[seriesUWIs == UWI].index[0]} to bucket {bucket_name} and key {s3Key}")
 
     tempDf.to_csv(csv_buffer, index = False)
     s3_resource.Object(bucket_name, s3Key).put(Body = csv_buffer.getvalue())
@@ -199,12 +199,12 @@ print("Now waiting 20 mintues for data prep lambdas to complete before initiatin
 for i in tqdm.tqdm(range(20)):
     time.sleep(60)
 
-#Create a step function client
-SFNclient = session.client('stepfunctions', region_name = 'us-west-2')
+# #Create a step function client
+# SFNclient = session.client('stepfunctions', region_name = 'us-west-2')
 
-#Start the step function to make plunger lift settings recommendations
-response = SFNclient.start_execution(
-    stateMachineArn='arn:aws:states:us-west-2:446356438225:stateMachine:PlungerPolicySearch'
-)
+# #Start the step function to make plunger lift settings recommendations
+# response = SFNclient.start_execution(
+#     stateMachineArn='arn:aws:states:us-west-2:446356438225:stateMachine:PlungerPolicySearch'
+# )
 
-print(response)
+# print(response)
