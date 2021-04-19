@@ -11,8 +11,8 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 pd.options.display.float_format = '{:,.0f}'.format
 
-# sHistoryKey = r'LossCurves/2021-01-29-LossCurves.csv'
-sHistoryKey = r'LossCurves/2020-12-16-LossCurves.csv'
+sHistoryKey = r'LossCurves/2021-01-29-LossCurves.csv'
+# sHistoryKey = r'LossCurves/2020-12-16-LossCurves.csv'
 
 ##################### Authentication #########################################
 ##This is where the session will look for the profile name
@@ -27,7 +27,7 @@ session = boto3.Session(profile_name=sProfile)
 #Experiment sso verification
 try:
 	print(os.system(f'aws s3 ls --profile {sProfile}'))
-else:
+except:
 	print(os.system(f'aws sso login --profile {sProfile}')) #SSO Log on
 ################################################################################
 

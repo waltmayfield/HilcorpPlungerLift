@@ -56,7 +56,7 @@ dsn = """(DESCRIPTION =
   )
     """
 
-print(f'Environmental variables: {os.environ}')
+# print(f'Environmental variables: {os.environ}')
 
 # connection = cx_Oracle.connect("wmayfield", os.environ["ORACLEPSWD"], dsn, encoding="UTF-8")
 connection = cx_Oracle.connect("hecplot", "PL0tmy_da7a", dsn, encoding="UTF-8")
