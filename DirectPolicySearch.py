@@ -111,8 +111,10 @@ def loss_function(prediction, y):
 #gpu_info = '\n'.join(gpu_info)
 #print(gpu_info)
 
+numBatches = int(np.ceil(num_examples/batch_size))
+
 dfSuggestions = pd.DataFrame()
-for j, (tX, ty, UWI) in tqdm.tqdm(enumerate(allWellDs), total = int(np.ceil(num_examples/batch_size))):
+for j, (tX, ty, UWI) in tqdm.tqdm(enumerate(allWellDs), total = numBatches):
     # break
     # if j >10: break
     X = tX.numpy()
@@ -125,7 +127,7 @@ for j, (tX, ty, UWI) in tqdm.tqdm(enumerate(allWellDs), total = int(np.ceil(num_
     print('X shape: {}'.format(X.shape))
     #This is used to monitor gradient ascent and log changes in loss
     wellIndex = 0 #This well is plotted during gradient ascent
-    print('################### Focus API: {}, AVG 20 Plunger Arrival Speed: {:.1f} ####################'.format(UWIs[wellIndex],y[wellIndex,-22:-2,1].mean()))
+    print(f'################### Batch {j} of {numBatches}, Focus API: {UWIs[wellIndex]}, AVG 20 Plunger Arrival Speed: {y[wellIndex,-22:-2,1].mean():.1f} ####################')
 
     # X = X.astype('float32')#This line may not be necessary
     XConstantTensor = tf.constant(X[:,:-1,:])#All of X except the last cycle
