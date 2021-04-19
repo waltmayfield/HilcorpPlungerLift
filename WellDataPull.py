@@ -99,7 +99,7 @@ sEndDate = str(dateToday.year)+ "-" + str(dateToday.month) + "-" + str(dateToday
 print(f'Last Date To Pull Data From: {sEndDate}')
 # seriesUWIs = ['0506705009']
 
-for UWI in tqdm.tqdm(seriesUWIs):
+for i,UWI in tqdm.tqdm(seriesUWIs.items()):
     # time.sleep(100)
 
     # UWI = '3003926762'#This is for testing

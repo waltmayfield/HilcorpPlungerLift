@@ -103,7 +103,7 @@ sEndDate = str(dateToday.year)+ "-" + str(dateToday.month) + "-" + str(dateToday
 print(f'Last Date To Pull Data From: {sEndDate}')
 # seriesUWIs = ['0506705009']
 
-for UWI in tqdm.tqdm(seriesUWIs):
+for i, UWI in tqdm.tqdm(seriesUWIs.items()):
     # time.sleep(100)
 
     # UWI = '3003926762'#This is for testing
@@ -184,7 +184,7 @@ for UWI in tqdm.tqdm(seriesUWIs):
     s3Key = prefix + '{}.csv'.format(UWI)
     # s3Key = prefix + 'testWellFile.csv'
 
-    print(f"Uploading well # {seriesUWIs[seriesUWIs == UWI].index[0]} to bucket {bucket_name} and key {s3Key}")
+    print(f"Uploading well # {i} to bucket {bucket_name} and key {s3Key}")
 
     tempDf.to_csv(csv_buffer, index = False)
     s3_resource.Object(bucket_name, s3Key).put(Body = csv_buffer.getvalue())
