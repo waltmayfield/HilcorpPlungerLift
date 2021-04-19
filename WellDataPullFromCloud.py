@@ -184,7 +184,7 @@ for i, UWI in tqdm.tqdm(seriesUWIs.items()):
     s3Key = prefix + '{}.csv'.format(UWI)
     # s3Key = prefix + 'testWellFile.csv'
 
-    print(f"Uploading well # {i} to bucket {bucket_name} and key {s3Key}")
+    print(f"Uploading well # {i} to bucket {bucket_name} and key {s3Key} for data between {sStartDate} and {sEndDate}")
 
     tempDf.to_csv(csv_buffer, index = False)
     s3_resource.Object(bucket_name, s3Key).put(Body = csv_buffer.getvalue())
