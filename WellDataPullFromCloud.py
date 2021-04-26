@@ -194,10 +194,10 @@ for i, UWI in tqdm.tqdm(seriesUWIs.items()):
     # break
 # os.remove(sTempFileLoc)
 
-#Now wait 20 minutes for the lambdas to complete and run the policy search step function
-print("Now waiting 20 mintues for data prep lambdas to complete before initiating step fuction")
-for i in tqdm.tqdm(range(20)):
-    time.sleep(60)
+# #Now wait 20 minutes for the lambdas to complete and run the policy search step function
+# print("Now waiting 20 mintues for data prep lambdas to complete before initiating step fuction")
+# for i in tqdm.tqdm(range(20)):
+#     time.sleep(60)
 
 # #Create a step function client
 # SFNclient = session.client('stepfunctions', region_name = 'us-west-2')
