@@ -18,7 +18,7 @@ from datetime import datetime, timedelta, date
 # main_bucket_name = 'hilcorp-s3-plungerlift' #Sandbox Version
 # bucket_name = 'plunger-lift-temp-data'#Sand box version
 
-sProfile = 'my-sso-profile-production' #Production version
+# sProfile = 'my-sso-profile-production' #Production version
 main_bucket_name = 'hilcorp-l48operations-plunger-lift-main' #Production version
 bucket_name = 'hilcorp-l48operations-plunger-lift-temp' #Production version
 
@@ -38,12 +38,14 @@ s3_resource = session.resource('s3')
 #APIs already in bucket
 my_bucket = s3_resource.Bucket(bucket_name)
 allObjects = my_bucket.objects.all()
-#Try to make the connection. If it doesn't work run SSO
-try:
-    lApisInBucket = [o.key[len(prefix):-4] for o in allObjects if o.key[0:len(prefix)] == prefix]
-except:
-    print(os.system(f'aws sso login --profile {sProfile}'))
-    lApisInBucket = [o.key[len(prefix):-4] for o in allObjects if o.key[0:len(prefix)] == prefix]
+
+lApisInBucket = [o.key[len(prefix):-4] for o in allObjects if o.key[0:len(prefix)] == prefix]
+# #Try to make the connection. If it doesn't work run SSO
+# try:
+#     lApisInBucket = [o.key[len(prefix):-4] for o in allObjects if o.key[0:len(prefix)] == prefix]
+# except:
+#     print(os.system(f'aws sso login --profile {sProfile}'))
+#     lApisInBucket = [o.key[len(prefix):-4] for o in allObjects if o.key[0:len(prefix)] == prefix]
 
 #Oracle Connection
 # cx_Oracle.init_oracle_client(lib_dir=r'C:\Users\wmayfield\instantclient_19_8')
