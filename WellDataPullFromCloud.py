@@ -112,8 +112,8 @@ for i, UWI in tqdm.tqdm(seriesUWIs.items()):
 
     try:
         obj = s3_client.get_object(Bucket=main_bucket_name, Key=main_prefix + str(UWI) + '.csv')
-        lastDate = obj['LastModified'].date()+ timedelta(days=-7)#It's OK to pull a small overlap. The overlap will not be written to the main file
-        sStartDate = str(lastDate.year)+ "-" + str(lastDate.month) + "-" + str(lastDate.day)
+        lastDate = obj['LastModified'].date() + timedelta(days=-7)#It's OK to pull a small overlap. The overlap will not be written to the main file
+        sStartDate = str(lastDate.year) + "-" + str(lastDate.month) + "-" + str(lastDate.day)
         # iSecondsSinceUpdate = (obj['LastModified'].date()-lastDate).total_seconds()
         # # print('Days since update: {}'.format(iSecondsSinceUpdate/(86400)))
         # if iSecondsSinceUpdate < 86400*5: #Don't update if the file was changed less than 5 days ago
