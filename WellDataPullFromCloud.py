@@ -40,12 +40,6 @@ my_bucket = s3_resource.Bucket(bucket_name)
 allObjects = my_bucket.objects.all()
 
 lApisInBucket = [o.key[len(prefix):-4] for o in allObjects if o.key[0:len(prefix)] == prefix]
-# #Try to make the connection. If it doesn't work run SSO
-# try:
-#     lApisInBucket = [o.key[len(prefix):-4] for o in allObjects if o.key[0:len(prefix)] == prefix]
-# except:
-#     print(os.system(f'aws sso login --profile {sProfile}'))
-#     lApisInBucket = [o.key[len(prefix):-4] for o in allObjects if o.key[0:len(prefix)] == prefix]
 
 #Oracle Connection
 # cx_Oracle.init_oracle_client(lib_dir=r'C:\Users\wmayfield\instantclient_19_8')
